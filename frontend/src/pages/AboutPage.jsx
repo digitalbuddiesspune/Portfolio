@@ -29,16 +29,10 @@ function TeamMember({ person, imageRight = false, delay = 0 }) {
           className="w-full h-full object-cover"
         />
       </div>
-      <div className="min-w-0 flex-1 text-left">
-        <h3 className="text-2xl sm:text-3xl font-bold text-black tracking-tight mb-2">
-          {person.name}
-        </h3>
-        <p className="text-gray-600 font-medium mb-4 text-base border-b border-black/10 pb-4 inline-block">
-          {person.role}
-        </p>
-        <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
-          {person.bio}
-        </p>
+      <div className="p-6">
+        <h3 className="text-xl font-semibold text-black">{person.name}</h3>
+        <p className="text-gray-600 text-sm font-medium mb-3">{person.role}</p>
+        <p className="text-gray-600 text-sm leading-relaxed">{person.bio}</p>
       </div>
     </div>
   );
@@ -47,36 +41,20 @@ function TeamMember({ person, imageRight = false, delay = 0 }) {
 export default function AboutPage() {
   return (
     <main className="min-h-screen">
-      <section className="relative pt-32 pb-20 px-4 sm:px-6 bg-black overflow-hidden">
-        {/* Subtle gradient accent */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-transparent pointer-events-none" aria-hidden />
-        <div className="relative max-w-4xl mx-auto text-center">
-          <h1
-            className="text-4xl sm:text-6xl md:text-7xl font-bold text-white mb-5 tracking-tight opacity-0 animate-fade-in-up"
-            style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}
-          >
-            About <span className="text-white">Gamotech</span>
+      <section className="pt-28 pb-12 px-4 sm:px-6 bg-black">
+        <div className="max-w-6xl mx-auto text-center">
+          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4 tracking-tight">
+            About <span className="text-white font-bold">Gamotech</span>
           </h1>
-          <div
-            className="w-16 h-0.5 bg-white/40 mx-auto mb-6 opacity-0 animate-fade-in"
-            style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}
-            aria-hidden
-          />
-          <p
-            className="text-gray-400 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed opacity-0 animate-fade-in-up"
-            style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}
-          >
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
             The people behind our vision and execution.
           </p>
         </div>
       </section>
 
-      <section className="py-24 px-6 sm:px-10 md:px-12 bg-gray-50 w-full">
-        <div className="w-full max-w-6xl mx-auto">
-          <h2
-            className="text-3xl sm:text-4xl font-bold text-black mb-16 text-center tracking-tight opacity-0 animate-fade-in-up"
-            style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}
-          >
+      <section className="py-16 px-4 sm:px-6 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-2xl font-bold text-black mb-10 text-center">
             Leadership
           </h2>
           <div className="space-y-24 w-full py-2">
@@ -86,7 +64,7 @@ export default function AboutPage() {
           <div className="mt-14 text-center">
             <Link
               to="/"
-              className="text-gray-600 hover:text-black font-medium transition-colors"
+              className="text-gray-800 hover:text-black font-semibold text-lg transition-colors"
             >
               ← Back to Home
             </Link>
