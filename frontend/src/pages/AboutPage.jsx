@@ -1,5 +1,8 @@
 import { Link } from 'react-router-dom';
 
+const HERO_IMAGE_URL =
+  'https://res.cloudinary.com/dvkxgrcbv/image/upload/v1771227140/Untitled_1920_x_600_px_1920_x_700_px_cq4vwz.png';
+
 const FOUNDER = {
   name: 'Vinay Mathure',
   role: 'Founder & CEO',
@@ -41,12 +44,20 @@ function TeamMember({ person, imageRight = false, delay = 0 }) {
 export default function AboutPage() {
   return (
     <main className="min-h-screen">
-      <section className="pt-28 pb-12 px-4 sm:px-6 bg-black">
-        <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4 tracking-tight">
-            About <span className="text-white font-bold">Gamotech</span>
+      <section className="relative pt-28 pb-20 px-4 sm:px-6 min-h-[85vh] flex items-center overflow-hidden">
+        <div className="absolute inset-0 w-full h-full">
+          <img
+            src={HERO_IMAGE_URL}
+            alt="About Gamotech"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/50" />
+        </div>
+        <div className="relative z-10 max-w-6xl w-full text-left pl-0">
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white mb-4 tracking-tight">
+            About  
           </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+          <p className="text-gray-300 text-lg max-w-2xl">
             The people behind our vision and execution.
           </p>
         </div>

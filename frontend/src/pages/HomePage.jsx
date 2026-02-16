@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowUpRight, ArrowRight, Code, Globe, Cpu } from 'lucide-react';
+import { ArrowUpRight, ArrowRight, Globe, Smartphone, ShoppingCart, Users, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 // Placeholder for the generated hero image - using a high-quality Unsplash image as fallback
@@ -28,8 +28,11 @@ const ProjectCard = ({ title, category, image }) => {
   );
 };
 
+const WORKS_TOTAL_PAGES = 7;
+
 export default function HomePage() {
   const [offsetY, setOffsetY] = useState(0);
+  const [worksPage, setWorksPage] = useState(1);
 
   useEffect(() => {
     const handleScroll = () => setOffsetY(window.scrollY);
@@ -114,20 +117,26 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 2. Services / Info Section (Replacing duplicated Company Info) */}
+      {/* 2. Services We Provide */}
       <section className="py-32 px-6 bg-black relative">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[
-            { title: "Web Development", icon: <Globe className="w-10 h-10 text-purple-500" />, desc: "Building scalable, high-performance web applications using modern frameworks." },
-            { title: "IT Consultancy", icon: <Code className="w-10 h-10 text-yellow-500" />, desc: "Expert guidance on digital transformation and technology strategy." },
-            { title: "System Solutions", icon: <Cpu className="w-10 h-10 text-pink-500" />, desc: "Tailored software solutions for complex business challenges." }
-          ].map((item, i) => (
-            <div key={i} className="bg-zinc-900/50 border border-zinc-800 p-10 hover:bg-zinc-900 transition-colors group">
-              <div className="mb-6">{item.icon}</div>
-              <h3 className="text-2xl font-bold mb-4 text-white group-hover:text-purple-400 transition-colors">{item.title}</h3>
-              <p className="text-zinc-400 leading-relaxed text-lg">{item.desc}</p>
-            </div>
-          ))}
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-16 text-center tracking-tight">
+            Services We Provide
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { title: "Web Development", icon: <Globe className="w-10 h-10 text-purple-500" />, desc: "Building scalable, high-performance web applications using modern frameworks." },
+              { title: "App Development", icon: <Smartphone className="w-10 h-10 text-yellow-500" />, desc: "Native and cross-platform mobile apps that engage users and grow your business." },
+              { title: "E-commerce Development", icon: <ShoppingCart className="w-10 h-10 text-pink-500" />, desc: "Full-featured online stores, payment integration, and seamless shopping experiences." },
+              { title: "CRM", icon: <Users className="w-10 h-10 text-indigo-400" />, desc: "Customer relationship management systems to streamline sales and support." }
+            ].map((item, i) => (
+              <div key={i} className="bg-zinc-900/50 border border-zinc-800 p-10 hover:bg-zinc-900 transition-colors group">
+                <div className="mb-6">{item.icon}</div>
+                <h3 className="text-xl font-bold mb-4 text-white group-hover:text-purple-400 transition-colors">{item.title}</h3>
+                <p className="text-zinc-400 leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -135,8 +144,8 @@ export default function HomePage() {
       <section className="py-32 px-6 bg-zinc-950 relative">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-end mb-24 border-b border-zinc-800 pb-10">
-            <h2 className="text-6xl md:text-8xl font-bold tracking-tighter">
-              Selected <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">Works</span>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tighter">
+              Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">Works</span>
             </h2>
             <p className="text-zinc-400 max-w-md text-right mt-8 md:mt-0 text-xl font-light">
               A showcase of our recent partnerships and successful deliveries.
@@ -145,10 +154,34 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
             {projects.map((project, index) => (
-              <div key={index} className={`${index % 2 === 1 ? 'md:translate-y-24' : ''}`}>
+              <div key={`${worksPage}-${index}`} className={`${index % 2 === 1 ? 'md:translate-y-24' : ''}`}>
                 <ProjectCard {...project} />
               </div>
             ))}
+          </div>
+
+          <div className="flex justify-center items-center gap-4 mt-16 pt-10 border-t border-zinc-800">
+            <button
+              type="button"
+              onClick={() => setWorksPage((p) => Math.max(1, p - 1))}
+              disabled={worksPage === 1}
+              className="flex items-center justify-center w-11 h-11 rounded-lg bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-zinc-800/80 disabled:hover:text-zinc-400"
+              aria-label="Previous page"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            <span className="min-w-[3rem] text-center text-lg font-semibold text-white">
+              {worksPage}
+            </span>
+            <button
+              type="button"
+              onClick={() => setWorksPage((p) => Math.min(WORKS_TOTAL_PAGES, p + 1))}
+              disabled={worksPage === WORKS_TOTAL_PAGES}
+              className="flex items-center justify-center w-11 h-11 rounded-lg bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-zinc-800/80 disabled:hover:text-zinc-400"
+              aria-label="Next page"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
           </div>
         </div>
       </section>
@@ -158,10 +191,10 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-indigo-900/20 via-black to-black opacity-60" />
 
         <div className="relative z-10 max-w-5xl mx-auto px-6">
-          <h2 className="text-6xl md:text-9xl font-bold mb-10 tracking-tighter text-white">
+          <h2 className="text-4xl md:text-5xl font-bold mb-10 tracking-tighter text-white">
             Ready to <span className="italic font-light text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">Scale?</span>
           </h2>
-          <p className="text-zinc-400 text-2xl md:text-3xl mb-16 font-light max-w-3xl mx-auto">
+          <p className="text-zinc-400 text-lg md:text-xl mb-16 font-light max-w-3xl mx-auto">
             Let's build the future of your business together.
           </p>
           <Link to="/contact" className="inline-block bg-white text-black px-16 py-6 rounded-full text-xl font-bold hover:bg-yellow-400 hover:scale-105 transition-all shadow-[0_0_40px_rgba(255,255,255,0.1)]">

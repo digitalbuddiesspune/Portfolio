@@ -57,8 +57,7 @@ export default function Header() {
               alt="Gamotech"
               className="h-10 w-auto object-contain opacity-100 transition-opacity"
             />
-            {/* White Text for the new dark hero */}
-            <span className="font-bold text-xl tracking-tight hidden sm:block">GAMOTECH</span>
+            {/* White Text for the new dark hero */} 
           </Link>
           <ul className="flex items-center gap-10">
             <li>
