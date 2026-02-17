@@ -1,6 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLottie } from "lottie-react";
+
+// Wrapper so useLottie hook is called in a stable component (not recreated each render)
+function LottieView({ animationData }) {
+  const { View } = useLottie({
+    animationData,
+    loop: true,
+    style: { width: 120, height: 120 }
+  });
+  return <div className="w-32 h-32 flex items-center justify-center">{View}</div>;
+}
+
 // Placeholder for the generated hero image - using a high-quality Unsplash image as fallback
 const HERO_IMAGE_URL = "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2669&auto=format&fit=crop";
 // Contact section - handshake illustration (replace with your asset if needed)
@@ -124,56 +136,6 @@ const ProjectCard = ({ title, category, image, description, websiteLink }) => {
   );
 };
 
-// Helper function to safely render Lottie animation
-const renderLottie = (animationData) => {
-  // Always return valid JSX
-  const fallback = <div className="w-20 h-20 bg-zinc-700 rounded-lg flex items-center justify-center text-zinc-400 text-xs">Loading...</div>;
-
-  // Check if Lottie is actually a valid React component
-  if (!Lottie) {
-    console.error('Lottie component is not available');
-    return fallback;
-  }
-
-  // Check if Lottie is a function (React component)
-  if (typeof Lottie !== 'function' && typeof Lottie !== 'object') {
-    console.error('Lottie is not a valid component. Type:', typeof Lottie, Lottie);
-    return fallback;
-  }
-
-  // Check if animation data is valid
-  if (!animationData) {
-    return fallback;
-  }
-
-  if (typeof animationData !== 'object' || Array.isArray(animationData)) {
-    return fallback;
-  }
-
-  // Ensure animationData has required Lottie properties (v for version or layers)
-  if (!animationData.v && !animationData.layers) {
-    console.warn('Animation data missing required properties:', animationData);
-    return fallback;
-  }
-
-  try {
-    // Use React.createElement to ensure proper component creation
-    const LottieComponent = Lottie.default || Lottie;
-    if (typeof LottieComponent !== 'function') {
-      console.error('LottieComponent is not a function:', LottieComponent);
-      return fallback;
-    }
-    return React.createElement(LottieComponent, {
-      animationData: animationData,
-      style: { width: 80, height: 80 },
-      loop: true
-    });
-  } catch (error) {
-    console.error('Error rendering Lottie:', error);
-    return fallback;
-  }
-};
-
 export default function HomePage() {
   const [offsetY, setOffsetY] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState('website development');
@@ -188,49 +150,13 @@ export default function HomePage() {
     eccom: null,
     crm: null
   });
-  const [lottieModule, setLottieModule] = useState(null);
   const CONTACT_EMAIL = 'start@gamotech.com';
 
-  // Load Lottie module dynamically
-  useEffect(() => {
-    const loadLottie = async () => {
-      try {
-        const module = await import('lottie-react');
-        setLottieModule(module);
-      } catch (error) {
-        console.error('Failed to load Lottie:', error);
-      }
-    };
-
-    loadLottie();
-  }, []);
-
-  // Helper component to render Lottie safely using useLottie hook
   const LottieRenderer = ({ animationData }) => {
-    if (!lottieModule || !animationData) {
+    if (!animationData) {
       return <div className="w-20 h-20 bg-zinc-700 rounded-lg flex items-center justify-center text-zinc-400 text-xs">Loading...</div>;
     }
-
-    const { useLottie } = lottieModule;
-
-    if (!useLottie || typeof useLottie !== 'function') {
-      return <div className="w-20 h-20 bg-zinc-700 rounded-lg flex items-center justify-center text-zinc-400 text-xs">Loading...</div>;
-    }
-
-    const LottieInner = () => {
-      const { View } = useLottie({
-        animationData: animationData,
-        loop: true,
-        style: { width: 120, height: 120 }
-      });
-      return View;
-    };
-
-    return (
-      <div className="w-32 h-32 flex items-center justify-center">
-        <LottieInner />
-      </div>
-    );
+    return <LottieView animationData={animationData} />;
   };
 
   // Load animations dynamically
