@@ -7,6 +7,34 @@ const HERO_IMAGE_URL = "https://images.unsplash.com/photo-1497366216548-37526070
 // Contact section - handshake illustration (replace with your asset if needed)
 const HANDSHAKE_IMAGE_URL = "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1771311023/Untitled_1600_x_900_px_my29is.png";
 
+const ServiceFlipCard = ({ title, icon, description }) => {
+  return (
+    <div className="group w-64 h-80 flex-shrink-0" style={{ perspective: '1000px' }}>
+      <div
+        className="relative w-full h-full transition-transform duration-700 ease-in-out group-hover:[transform:rotateY(180deg)]"
+        style={{ transformStyle: 'preserve-3d' }}
+      >
+        {/* Front */}
+        <div
+          className="absolute inset-0 rounded-2xl border border-zinc-800 bg-zinc-900/90 backdrop-blur p-8 flex flex-col items-center justify-center"
+          style={{ backfaceVisibility: 'hidden' }}
+        >
+          <div className="mb-4">{icon}</div>
+          <h3 className="text-xl font-semibold text-white text-center">{title}</h3>
+        </div>
+        {/* Back */}
+        <div
+          className="absolute inset-0 rounded-2xl border border-zinc-800 bg-zinc-800/95 backdrop-blur p-6 flex flex-col items-center justify-center"
+          style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+        >
+          <h3 className="text-lg font-semibold text-white mb-3 text-center">{title}</h3>
+          <p className="text-zinc-300 text-sm leading-relaxed text-center whitespace-pre-line">{description}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ProjectCard = ({ title, category, image }) => {
   return (
     <div className="group relative w-full aspect-[4/3] overflow-hidden bg-zinc-900 border border-zinc-800 rounded-2xl cursor-pointer shadow-lg hover:shadow-purple-900/20 transition-all duration-500">

@@ -1,11 +1,76 @@
 import express from 'express';
+import multer from 'multer';
+import streamifier from 'streamifier';
+import { v2 as cloudinary } from 'cloudinary';
 import Portfolio from '../model/adminModal.js';
 import { authenticateToken } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
+// Multer: keep file in memory for Cloudinary upload
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter: (req, file, cb) => {
+    const allowed = /image\/(jpeg|jpg|png|gif|webp)/;
+    if (allowed.test(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only images (JPEG, PNG, GIF, WebP) are allowed.'), false);
+    }
+  }
+});
+
 // Apply authentication middleware to all admin routes
 router.use(authenticateToken);
+
+// Upload image to Cloudinary; returns URL to save in DB
+router.post('/upload-image', (req, res, next) => {
+  upload.single('image')(req, res, (multerErr) => {
+    if (multerErr) {
+      console.error('Multer error:', multerErr);
+      return res.status(400).json({
+        success: false,
+        message: multerErr.message || 'Invalid file. Use JPEG, PNG, GIF or WebP under 5MB.'
+      });
+    }
+    if (!req.file || !req.file.buffer) {
+      return res.status(400).json({
+        success: false,
+        message: 'No image file provided. Please select an image.'
+      });
+    }
+
+    try {
+      const stream = streamifier.createReadStream(req.file.buffer);
+      const uploadStream = cloudinary.uploader.upload_stream(
+        { folder: 'portfolio' },
+        (err, result) => {
+          if (err) {
+            console.error('Cloudinary upload error:', err);
+            return res.status(500).json({
+              success: false,
+              message: 'Cloudinary upload failed',
+              error: err.message
+            });
+          }
+          res.json({
+            success: true,
+            url: result.secure_url
+          });
+        }
+      );
+      stream.pipe(uploadStream);
+    } catch (err) {
+      console.error('Upload stream error:', err);
+      res.status(500).json({
+        success: false,
+        message: 'Server error during upload',
+        error: err.message
+      });
+    }
+  });
+});
 
 // Get all portfolio items
 router.get('/portfolio', async (req, res) => {

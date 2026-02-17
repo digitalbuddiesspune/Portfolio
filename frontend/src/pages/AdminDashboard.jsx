@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Edit2, Trash2, X, Save, LogOut, Package, LayoutGrid } from 'lucide-react';
+import { Plus, Edit2, Trash2, Save, LogOut, Package, LayoutGrid, Upload, Loader2 } from 'lucide-react';
 
 const API_URL = 'http://localhost:3000/api/admin';
 
@@ -19,6 +19,8 @@ export default function AdminDashboard() {
     image: '',
     description: ''
   });
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
   // Check authentication
@@ -138,6 +140,50 @@ export default function AdminDashboard() {
     } catch (err) {
       setError('Network error. Please try again.');
       console.error('Submit error:', err);
+    }
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setError('Please select an image file (JPEG, PNG, GIF, or WebP).');
+      return;
+    }
+    setError('');
+    setUploadingImage(true);
+    try {
+      const token = localStorage.getItem('adminToken');
+      const formDataUpload = new FormData();
+      formDataUpload.append('image', file);
+      const response = await fetch(`${API_URL}/upload-image`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formDataUpload
+      });
+      const raw = await response.text();
+      let data;
+      try {
+        data = raw ? JSON.parse(raw) : {};
+      } catch {
+        setError(response.ok ? 'Invalid response from server.' : `Upload failed (${response.status}). Is the backend running on port 3000?`);
+        return;
+      }
+      if (data.success && data.url) {
+        setFormData((prev) => ({ ...prev, image: data.url }));
+        setSuccess('Image uploaded to Cloudinary.');
+        setTimeout(() => setSuccess(''), 2000);
+      } else {
+        setError(data.message || data.error || 'Upload failed');
+      }
+    } catch (err) {
+      setError('Image upload failed. Check your connection and that the backend is running (npm start in bakend folder).');
+      console.error('Upload error:', err);
+    } finally {
+      setUploadingImage(false);
+      e.target.value = '';
     }
   };
 
@@ -409,18 +455,40 @@ export default function AdminDashboard() {
 
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Image URL *
+                      Product Image *
                     </label>
                     <input
-                      type="url"
-                      value={formData.image}
-                      onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black bg-white"
-                      placeholder="https://example.com/image.jpg"
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                      onChange={handleImageUpload}
+                      className="hidden"
                     />
+                    <div className="flex flex-wrap items-center gap-4">
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={uploadingImage}
+                        className="inline-flex items-center gap-2 px-5 py-3 bg-purple-100 text-purple-700 rounded-lg border-2 border-purple-300 hover:bg-purple-200 focus:ring-2 focus:ring-purple-500 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                      >
+                        {uploadingImage ? (
+                          <>
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            Uploading…
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="w-5 h-5" />
+                            Upload image
+                          </>
+                        )}
+                      </button>
+                      <span className="text-sm text-gray-500">
+                        Click to open file manager — image will be uploaded to Cloudinary and saved in the database.
+                      </span>
+                    </div>
                     {formData.image && (
-                      <div className="mt-3">
+                      <div className="mt-3 flex items-start gap-3">
                         <img
                           src={formData.image}
                           alt="Preview"
@@ -429,6 +497,7 @@ export default function AdminDashboard() {
                             e.target.style.display = 'none';
                           }}
                         />
+                        <p className="text-xs text-gray-500 break-all max-w-md">Saved URL: {formData.image}</p>
                       </div>
                     )}
                   </div>
