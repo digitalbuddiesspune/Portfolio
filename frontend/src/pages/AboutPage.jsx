@@ -12,7 +12,7 @@ const FOUNDER = {
 
 const CO_FOUNDER = {
   name: 'Shubhangi Pardhi',
-  role: 'Co-Founder & CTO',
+  role: 'Co-Founder',
   bio: 'The Co-Founder, is a dedicated SEO Executive and Digital Marketing specialist with strong expertise in search engine optimization, social media marketing, and performance-driven digital strategies. With a keen understanding of keyword research, content optimization, and audience targeting, she focuses on improving search rankings, increasing online visibility, and building strong brand engagement across digital platforms. Her strategic approach to social media campaigns and data-backed marketing initiatives helps businesses connect with the right audience, strengthen their online presence, and drive consistent growth in an ever-evolving digital landscape.',
   image: 'https://res.cloudinary.com/dvkxgrcbv/image/upload/v1771068704/ChatGPT_Image_Feb_14_2026_05_00_38_PM_czonwy.jpg',
 };
@@ -44,7 +44,8 @@ function TeamMember({ person, imageRight = false, delay = 0 }) {
 export default function AboutPage() {
   return (
     <main className="min-h-screen">
-      <section className="relative pt-28 pb-20 px-4 sm:px-6 min-h-[85vh] flex items-center overflow-hidden">
+      {/* Static hero - content below scrolls over it */}
+      <section className="fixed top-0 left-0 right-0 h-[85vh] z-0 flex items-center overflow-hidden">
         <div className="absolute inset-0 w-full h-full">
           <img
             src={HERO_IMAGE_URL}
@@ -53,9 +54,9 @@ export default function AboutPage() {
           />
           <div className="absolute inset-0 bg-black/50" />
         </div>
-        <div className="relative z-10 max-w-6xl w-full text-left pl-0">
+        <div className="relative z-10 max-w-6xl w-full text-left px-4 sm:px-6 md:px-8 pl-8 sm:pl-10 md:pl-16 lg:pl-24">
           <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white mb-4 tracking-tight">
-            About  
+            About
           </h1>
           <p className="text-gray-300 text-lg max-w-2xl">
             The people behind our vision and execution.
@@ -63,10 +64,13 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="py-16 px-4 sm:px-6 bg-gray-50">
+      {/* Spacer so content starts below hero */}
+      <div className="relative z-10 h-[85vh] shrink-0" aria-hidden="true" />
+      <section className="py-16 px-4 sm:px-6 bg-gray-50 relative z-10">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl font-bold text-black mb-10 text-center">
-            Leadership
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold text-gray-900 uppercase tracking-[0.02em] text-center mb-16 drop-shadow-[0_2px_4px_rgba(0,0,0,0.08)] leading-tight">
+            <span className="block">The</span>
+            <span className="block mt-2">Leader</span>
           </h2>
           <div className="space-y-24 w-full py-2">
             <TeamMember person={FOUNDER} delay={0.3} />

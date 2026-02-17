@@ -6,7 +6,10 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-black border-t border-white/10 mt-auto">
+    <footer
+      className="relative z-20 border-t border-white/10 mt-auto"
+      style={{ backgroundColor: '#000000' }}
+    >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
           <Link to="/" className="flex items-center gap-2">
@@ -14,8 +17,7 @@ export default function Footer() {
               src={LOGO_URL}
               alt="Gamotech"
               className="h-8 w-auto object-contain opacity-90"
-            />
-            <span className="font-bold text-white">Gamotech</span>
+            /> 
           </Link>
           <ul className="flex items-center gap-6">
             <li>
