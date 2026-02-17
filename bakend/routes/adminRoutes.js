@@ -21,7 +21,24 @@ const upload = multer({
   }
 });
 
-// Apply authentication middleware to all admin routes
+// Public route: Get all portfolio items (no auth required)
+router.get('/portfolio/public', async (req, res) => {
+  try {
+    const portfolios = await Portfolio.find().sort({ createdAt: -1 });
+    res.json({
+      success: true,
+      data: portfolios
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching portfolios',
+      error: error.message
+    });
+  }
+});
+
+// Apply authentication middleware to all admin routes below
 router.use(authenticateToken);
 
 // Upload image to Cloudinary; returns URL to save in DB

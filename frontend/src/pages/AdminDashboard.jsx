@@ -225,31 +225,32 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex">
+    <div className="h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col md:flex-row overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-64 bg-gradient-to-b from-purple-900 to-indigo-900 text-white shadow-2xl">
-        <div className="p-6 border-b border-white/10">
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <LayoutGrid className="w-6 h-6" />
-            Admin Panel
+      <aside className="w-full md:w-64 bg-gradient-to-b from-purple-900 to-indigo-900 text-white shadow-2xl flex flex-col h-screen md:h-auto">
+        <div className="p-4 sm:p-6 border-b border-white/10 flex-shrink-0">
+          <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
+            <LayoutGrid className="w-5 h-5 sm:w-6 sm:h-6" />
+            <span className="hidden sm:inline">Admin Panel</span>
+            <span className="sm:hidden">Admin</span>
           </h1>
         </div>
 
-        <nav className="p-4 space-y-2">
+        <nav className="p-3 sm:p-4 space-y-2 flex-1 overflow-y-auto">
           <button
             onClick={() => {
               setActiveView('products');
               setError('');
               setSuccess('');
             }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+            className={`w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg transition-all ${
               activeView === 'products'
                 ? 'bg-white/20 text-white shadow-lg'
                 : 'text-white/80 hover:bg-white/10 hover:text-white'
             }`}
           >
-            <Package className="w-5 h-5" />
-            <span className="font-medium">All Products</span>
+            <Package className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="font-medium text-sm sm:text-base">All Products</span>
             <span className="ml-auto bg-white/20 px-2 py-1 rounded text-xs">
               {portfolios.length}
             </span>
@@ -257,40 +258,42 @@ export default function AdminDashboard() {
 
           <button
             onClick={openAddForm}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+            className={`w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg transition-all ${
               activeView === 'add'
                 ? 'bg-white/20 text-white shadow-lg'
                 : 'text-white/80 hover:bg-white/10 hover:text-white'
             }`}
           >
-            <Plus className="w-5 h-5" />
-            <span className="font-medium">Add Product</span>
+            <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="font-medium text-sm sm:text-base">Add Product</span>
           </button>
         </nav>
 
-        <div className="absolute bottom-0 w-64 p-4 border-t border-white/10">
+        {/* Logout button at bottom */}
+        <div className="p-4 border-t border-white/10 flex-shrink-0">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-white/80 hover:bg-red-600/20 hover:text-white transition-all"
+            className="w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg bg-red-600/20 hover:bg-red-600/30 text-white border border-red-500/30 hover:border-red-500/50 transition-all"
+            title="Logout"
           >
-            <LogOut className="w-5 h-5" />
-            <span className="font-medium">Logout</span>
+            <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="font-medium text-sm sm:text-base">Logout</span>
           </button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto min-w-0 h-screen md:h-auto">
         {/* Header */}
         <header className="bg-white shadow-sm border-b sticky top-0 z-10">
-          <div className="px-8 py-4">
-            <h2 className="text-2xl font-bold text-gray-900">
+          <div className="px-4 sm:px-6 md:px-8 py-3 sm:py-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
               {activeView === 'products' ? 'All Products' : editingItem ? 'Edit Product' : 'Add New Product'}
             </h2>
           </div>
         </header>
 
-        <div className="p-8">
+        <div className="p-4 sm:p-6 md:p-8">
           {/* Success/Error Messages */}
           {success && (
             <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
@@ -325,8 +328,8 @@ export default function AdminDashboard() {
                       key={item._id}
                       className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow"
                     >
-                      <div className="flex">
-                        <div className="w-48 h-48 bg-gray-200 overflow-hidden flex-shrink-0">
+                      <div className="flex flex-col sm:flex-row">
+                        <div className="w-full sm:w-48 h-48 sm:h-48 bg-gray-200 overflow-hidden flex-shrink-0">
                           <img
                             src={item.image}
                             alt={item.name}
@@ -336,9 +339,9 @@ export default function AdminDashboard() {
                             }}
                           />
                         </div>
-                        <div className="flex-1 p-6 flex flex-col justify-between">
+                        <div className="flex-1 p-4 sm:p-6 flex flex-col justify-between">
                           <div>
-                            <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
                               {item.name || 'Untitled Product'}
                             </h3>
                             <p className="text-sm text-purple-600 font-semibold mb-2 capitalize">
@@ -365,7 +368,7 @@ export default function AdminDashboard() {
                               </a>
                             )}
                           </div>
-                          <div className="flex gap-3 mt-4">
+                          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-4">
                             <button
                               onClick={() => openEditForm(item)}
                               className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -392,10 +395,10 @@ export default function AdminDashboard() {
 
           {/* Add/Edit Form View */}
           {activeView === 'add' && (
-            <div className="max-w-3xl">
-              <div className="bg-white rounded-lg shadow-md p-8">
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="max-w-3xl w-full">
+              <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 md:p-8">
+                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
                         Product Name

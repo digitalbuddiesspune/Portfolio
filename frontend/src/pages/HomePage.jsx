@@ -1,33 +1,69 @@
-import { useState, useEffect } from 'react';
-import { ArrowUpRight, ArrowRight, Globe, Smartphone, ShoppingCart, Users, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
-
+import React, { useState, useEffect } from "react";
+import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
 // Placeholder for the generated hero image - using a high-quality Unsplash image as fallback
 const HERO_IMAGE_URL = "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2669&auto=format&fit=crop";
 // Contact section - handshake illustration (replace with your asset if needed)
 const HANDSHAKE_IMAGE_URL = "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1771311023/Untitled_1600_x_900_px_my29is.png";
 
 const ServiceFlipCard = ({ title, icon, description }) => {
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const handleClick = () => {
+    if (isMobile) {
+      setIsFlipped(!isFlipped);
+    }
+  };
+
   return (
-    <div className="group w-64 h-80 flex-shrink-0" style={{ perspective: '1000px' }}>
+    <div 
+      className="group w-72 h-80 flex-shrink-0 cursor-pointer" 
+      style={{ perspective: '1000px' }}
+      onClick={handleClick}
+    >
       <div
-        className="relative w-full h-full transition-transform duration-700 ease-in-out group-hover:[transform:rotateY(180deg)]"
-        style={{ transformStyle: 'preserve-3d' }}
+        className="relative w-full h-full transition-transform duration-700 ease-in-out"
+        style={{ 
+          transformStyle: 'preserve-3d',
+          transform: isMobile 
+            ? (isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)')
+            : undefined
+        }}
+        onMouseEnter={(e) => {
+          if (!isMobile) {
+            e.currentTarget.style.transform = 'rotateY(180deg)';
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!isMobile) {
+            e.currentTarget.style.transform = 'rotateY(0deg)';
+          }
+        }}
       >
         {/* Front */}
         <div
-          className="absolute inset-0 rounded-2xl border border-zinc-800 bg-zinc-900/90 backdrop-blur p-8 flex flex-col items-center justify-center"
+          className="absolute inset-0 rounded-tl-none rounded-br-none rounded-tr-[50px] rounded-bl-[50px] border border-zinc-800 bg-zinc-900/90 backdrop-blur p-8 flex flex-col items-center justify-center"
           style={{ backfaceVisibility: 'hidden' }}
         >
           <div className="mb-4">{icon}</div>
-          <h3 className="text-xl font-semibold text-white text-center">{title}</h3>
+          <h3 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600 text-center drop-shadow-sm">{title}</h3>
         </div>
         {/* Back */}
         <div
-          className="absolute inset-0 rounded-2xl border border-zinc-800 bg-zinc-800/95 backdrop-blur p-6 flex flex-col items-center justify-center"
+          className="absolute inset-0 rounded-tl-none rounded-br-none rounded-tr-[50px] rounded-bl-[50px] border border-zinc-800 bg-zinc-800/95 backdrop-blur p-6 flex flex-col items-center justify-center"
           style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
         >
-          <h3 className="text-lg font-semibold text-white mb-3 text-center">{title}</h3>
+          <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600 mb-3 text-center">{title}</h3>
           <p className="text-zinc-300 text-sm leading-relaxed text-center whitespace-pre-line">{description}</p>
         </div>
       </div>
@@ -35,36 +71,213 @@ const ServiceFlipCard = ({ title, icon, description }) => {
   );
 };
 
-const ProjectCard = ({ title, category, image }) => {
+const ProjectCard = ({ title, category, image, description, websiteLink }) => {
+  // Format category for display
+  const formatCategory = (cat) => {
+    if (!cat) return '';
+    return cat
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  };
+
+  const displayCategory = formatCategory(category);
+
   return (
-    <div className="group relative w-full aspect-[4/3] overflow-hidden bg-zinc-900 border border-zinc-800 rounded-2xl cursor-pointer shadow-lg hover:shadow-purple-900/20 transition-all duration-500">
-      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-500 z-10" />
+    <a
+      href={websiteLink || '#'}
+      target={websiteLink ? "_blank" : undefined}
+      rel={websiteLink ? "noopener noreferrer" : undefined}
+      className="group relative w-full aspect-[4/3] overflow-hidden bg-zinc-900 border border-zinc-800 rounded-2xl cursor-pointer shadow-lg hover:shadow-purple-900/20 transition-all duration-500 block"
+    >
+      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-all duration-500 z-10" />
       <img
         src={image}
         alt={title}
-        className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 scale-100 group-hover:scale-110 transition-all duration-700 ease-out opacity-60 group-hover:opacity-100"
+        className="absolute inset-0 w-full h-full object-cover scale-100 group-hover:scale-110 transition-all duration-700 ease-out opacity-90 group-hover:opacity-100"
       />
-      <div className="absolute inset-0 z-20 p-8 flex flex-col justify-between opacity-80 group-hover:opacity-100 transition-opacity">
+      <div className="absolute inset-0 z-20 p-8 flex flex-col justify-between">
         <div className="flex justify-between items-start translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-          <span className="text-xs font-mono text-zinc-100 tracking-widest uppercase border border-white/20 px-3 py-1 rounded-full bg-white/10 backdrop-blur">{category}</span>
+          <span className="text-xs font-mono text-zinc-100 tracking-widest uppercase border border-white/20 px-3 py-1 rounded-full bg-white/10 backdrop-blur">{displayCategory}</span>
           <ArrowUpRight className="text-white w-6 h-6 opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 transition-all duration-500 delay-100" />
         </div>
-        <div className="translate-y-8 group-hover:translate-y-0 transition-transform duration-500 delay-75">
+
+        {/* Description overlay - shows in middle on hover */}
+        <div className="absolute inset-0 flex items-center justify-center z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+          <div className="bg-black/80 backdrop-blur-sm rounded-lg p-6 max-w-md mx-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+            <p className="text-white text-sm leading-relaxed text-center">{description || 'No description available.'}</p>
+          </div>
+        </div>
+
+        <div className="translate-y-8 group-hover:translate-y-0 transition-transform duration-500 delay-75 relative z-20">
           <h3 className="text-4xl font-light text-white mb-2 tracking-tight">{title}</h3>
           <div className="h-[1px] w-0 group-hover:w-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-700 delay-200" />
         </div>
       </div>
-    </div>
+    </a>
   );
 };
 
-const WORKS_TOTAL_PAGES = 7;
+// Helper function to safely render Lottie animation
+const renderLottie = (animationData) => {
+  // Always return valid JSX
+  const fallback = <div className="w-20 h-20 bg-zinc-700 rounded-lg flex items-center justify-center text-zinc-400 text-xs">Loading...</div>;
+
+  // Check if Lottie is actually a valid React component
+  if (!Lottie) {
+    console.error('Lottie component is not available');
+    return fallback;
+  }
+
+  // Check if Lottie is a function (React component)
+  if (typeof Lottie !== 'function' && typeof Lottie !== 'object') {
+    console.error('Lottie is not a valid component. Type:', typeof Lottie, Lottie);
+    return fallback;
+  }
+
+  // Check if animation data is valid
+  if (!animationData) {
+    return fallback;
+  }
+
+  if (typeof animationData !== 'object' || Array.isArray(animationData)) {
+    return fallback;
+  }
+
+  // Ensure animationData has required Lottie properties (v for version or layers)
+  if (!animationData.v && !animationData.layers) {
+    console.warn('Animation data missing required properties:', animationData);
+    return fallback;
+  }
+
+  try {
+    // Use React.createElement to ensure proper component creation
+    const LottieComponent = Lottie.default || Lottie;
+    if (typeof LottieComponent !== 'function') {
+      console.error('LottieComponent is not a function:', LottieComponent);
+      return fallback;
+    }
+    return React.createElement(LottieComponent, {
+      animationData: animationData,
+      style: { width: 80, height: 80 },
+      loop: true
+    });
+  } catch (error) {
+    console.error('Error rendering Lottie:', error);
+    return fallback;
+  }
+};
 
 export default function HomePage() {
   const [offsetY, setOffsetY] = useState(0);
-  const [worksPage, setWorksPage] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState('website development');
+  const [portfolios, setPortfolios] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
   const [contact, setContact] = useState({ name: '', company: '', phone: '', email: '', message: '' });
+  const ITEMS_PER_PAGE = 4;
+  const [animations, setAnimations] = useState({
+    web: null,
+    app: null,
+    eccom: null,
+    crm: null
+  });
+  const [lottieModule, setLottieModule] = useState(null);
   const CONTACT_EMAIL = 'start@gamotech.com';
+
+  // Load Lottie module dynamically
+  useEffect(() => {
+    const loadLottie = async () => {
+      try {
+        const module = await import('lottie-react');
+        setLottieModule(module);
+      } catch (error) {
+        console.error('Failed to load Lottie:', error);
+      }
+    };
+
+    loadLottie();
+  }, []);
+
+  // Helper component to render Lottie safely using useLottie hook
+  const LottieRenderer = ({ animationData }) => {
+    if (!lottieModule || !animationData) {
+      return <div className="w-20 h-20 bg-zinc-700 rounded-lg flex items-center justify-center text-zinc-400 text-xs">Loading...</div>;
+    }
+
+    const { useLottie } = lottieModule;
+
+    if (!useLottie || typeof useLottie !== 'function') {
+      return <div className="w-20 h-20 bg-zinc-700 rounded-lg flex items-center justify-center text-zinc-400 text-xs">Loading...</div>;
+    }
+
+    const LottieInner = () => {
+      const { View } = useLottie({
+        animationData: animationData,
+        loop: true,
+        style: { width: 120, height: 120 }
+      });
+      return View;
+    };
+
+    return (
+      <div className="w-32 h-32 flex items-center justify-center">
+        <LottieInner />
+      </div>
+    );
+  };
+
+  // Load animations dynamically
+  useEffect(() => {
+    const loadAnimations = async () => {
+      try {
+        const [webMod, appMod, eccomMod, crmMod] = await Promise.all([
+          import('../utilities/web.json'),
+          import('../utilities/app.json'),
+          import('../utilities/eccom.json'),
+          import('../utilities/crm.json')
+        ]);
+
+        // Extract the actual JSON data - Vite wraps JSON in default
+        const extractData = (module) => {
+          if (!module) return null;
+          // Check if it's already the data
+          if (module.v || module.layers) {
+            return module;
+          }
+          // Check default export
+          if (module.default) {
+            if (module.default.v || module.default.layers) {
+              return module.default;
+            }
+            return module.default;
+          }
+          return module;
+        };
+
+        const loadedAnimations = {
+          web: extractData(webMod) ? JSON.parse(JSON.stringify(extractData(webMod))) : null,
+          app: extractData(appMod) ? JSON.parse(JSON.stringify(extractData(appMod))) : null,
+          eccom: extractData(eccomMod) ? JSON.parse(JSON.stringify(extractData(eccomMod))) : null,
+          crm: extractData(crmMod) ? JSON.parse(JSON.stringify(extractData(crmMod))) : null
+        };
+
+        // Animations loaded successfully
+        console.log('Animations loaded:', {
+          web: loadedAnimations.web ? 'loaded' : 'null',
+          app: loadedAnimations.app ? 'loaded' : 'null',
+          eccom: loadedAnimations.eccom ? 'loaded' : 'null',
+          crm: loadedAnimations.crm ? 'loaded' : 'null'
+        });
+
+        setAnimations(loadedAnimations);
+      } catch (error) {
+        console.error('Failed to load Lottie animations:', error);
+      }
+    };
+
+    loadAnimations();
+  }, []);
 
   const handleContactSubmit = (e) => {
     e.preventDefault();
@@ -79,11 +292,96 @@ export default function HomePage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const projects = [
-    { title: "Fairytails", category: "E-Commerce", image: "https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?q=80&w=2070&auto=format&fit=crop" },
-    { title: "Windsmit", category: "Industrial", image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2670&auto=format&fit=crop" },
-    { title: "Dynamic World", category: "Consultancy", image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2670&auto=format&fit=crop" },
-    { title: "Restrobazzar", category: "B2B Marketplace", image: "https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?q=80&w=2670&auto=format&fit=crop" },
+  // Fetch portfolios from API
+  useEffect(() => {
+    const fetchPortfolios = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:3000/api/admin/portfolio/public');
+        const data = await response.json();
+        console.log('Portfolio API Response:', data);
+        if (data.success) {
+          console.log('Portfolios loaded:', data.data);
+          setPortfolios(data.data || []);
+        } else {
+          console.error('API returned error:', data);
+        }
+      } catch (error) {
+        console.error('Error fetching portfolios:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPortfolios();
+  }, []);
+
+  // Filter portfolios by category - more flexible matching
+  const filteredPortfolios = portfolios.filter(portfolio => {
+    const category = (portfolio.category || '').toLowerCase().trim();
+    const selected = selectedCategory.toLowerCase().trim();
+
+    console.log('Filtering:', { category, selected, portfolioName: portfolio.name });
+
+    // First, try exact match (case-insensitive)
+    if (category === selected) {
+      return true;
+    }
+
+    // Normalize category names (remove hyphens, extra spaces, etc.)
+    const normalizeCategory = (cat) => {
+      return cat
+        .replace(/-/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    };
+
+    const normalizedCategory = normalizeCategory(category);
+    const normalizedSelected = normalizeCategory(selected);
+
+    // Map categories with flexible matching
+    if (normalizedSelected.includes('website') || normalizedSelected.includes('web')) {
+      // Match website/web development but exclude ecommerce
+      return (normalizedCategory.includes('website') || normalizedCategory.includes('web')) &&
+        !normalizedCategory.includes('ecommerce') &&
+        !normalizedCategory.includes('e commerce');
+    } else if (normalizedSelected.includes('ecommerce') || normalizedSelected.includes('e-commerce') || normalizedSelected.includes('e commerce')) {
+      // Match ecommerce/e-commerce (with or without hyphen, with or without space)
+      // Check both normalized and original category for maximum flexibility
+      return normalizedCategory.includes('ecommerce') ||
+        normalizedCategory.includes('e commerce') ||
+        category.includes('e-commerce') ||
+        category.includes('ecommerce') ||
+        category === 'e-commerce development' ||
+        category === 'ecommerce development';
+    } else if (normalizedSelected.includes('app')) {
+      return normalizedCategory.includes('app') ||
+        normalizedCategory.includes('application');
+    } else if (normalizedSelected.includes('crm')) {
+      return normalizedCategory.includes('crm');
+    }
+
+    return false;
+  });
+
+  console.log('Filtered portfolios:', filteredPortfolios.length, 'for category:', selectedCategory);
+  console.log('All portfolios categories:', portfolios.map(p => ({ name: p.name, category: p.category })));
+
+  // Pagination
+  const totalPages = Math.ceil(filteredPortfolios.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedPortfolios = filteredPortfolios.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  // Reset to page 1 when category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory]);
+
+  // Category buttons
+  const categories = [
+    { id: 'website development', label: 'Website Development' },
+    { id: 'e-commerce development', label: 'E-commerce Development' },
+    { id: 'app development', label: 'App Development' },
+    { id: 'crm', label: 'CRM' }
   ];
 
   return (
@@ -114,11 +412,11 @@ export default function HomePage() {
 
             {/* GAMOTECH Split Animation (White Text) - same left edge as tagline */}
             <div className="group cursor-default md:text-left w-full flex justify-center md:justify-start">
-              <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-extrabold tracking-tighter text-white flex justify-center md:justify-start items-center gap-2 md:gap-4 transition-all duration-500 drop-shadow-2xl">
-                <span className="inline-block transition-transform duration-500 ease-out group-hover:-translate-x-4">GAMO</span>
-                <span className="inline-block transition-transform duration-500 ease-out group-hover:translate-x-4">TECH</span>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold tracking-tighter text-white flex justify-center md:justify-start items-center gap-2 md:gap-3 lg:gap-4 drop-shadow-2xl">
+                <span className="inline-block transition-transform duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:-translate-x-8 md:group-hover:-translate-x-12 lg:group-hover:-translate-x-16">GAMO</span>
+                <span className="inline-block transition-transform duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:translate-x-8 md:group-hover:translate-x-12 lg:group-hover:translate-x-16">TECH</span>
               </h1>
-            </div> 
+            </div>
           </div>
 
           {/* Right: Feature Gradient Box - aligned to bottom */}
@@ -148,30 +446,30 @@ export default function HomePage() {
       {/* Spacer so content starts below hero; scrolling content has higher z so it slides over hero */}
       <div className="relative z-10 h-[90vh] shrink-0" aria-hidden="true" />
       {/* 2. Services We Provide */}
-      <section className="py-32 px-6 bg-black relative z-10">
+      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 bg-black relative z-10">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-16 text-center tracking-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-8 sm:mb-12 md:mb-16 text-center tracking-tight">
             Services We Provide
           </h2>
-          <div className="flex flex-nowrap justify-center items-center gap-6 lg:gap-8">
+          <div className="flex flex-wrap sm:flex-nowrap justify-center items-center gap-4 sm:gap-6 lg:gap-8 overflow-x-auto pb-4 sm:pb-0">
             <ServiceFlipCard
               title="Web Development"
-              icon={<Globe className="w-16 h-16 text-purple-500" />}
+              icon={<LottieRenderer animationData={animations.web} />}
               description={`Building scalable web applications\nusing modern frameworks and technologies.\nWe create responsive and interactive websites\nthat provide exceptional user experiences.\nOur solutions are optimized for performance.`}
             />
             <ServiceFlipCard
               title="App Development"
-              icon={<Smartphone className="w-16 h-16 text-yellow-500" />}
+              icon={<LottieRenderer animationData={animations.app} />}
               description={`Native and cross-platform mobile apps\nthat engage users and grow your business.\nWe develop iOS and Android applications\nwith seamless user interfaces.\nOur apps are designed for scalability.`}
             />
             <ServiceFlipCard
               title="E-commerce Development"
-              icon={<ShoppingCart className="w-16 h-16 text-pink-500" />}
+              icon={<LottieRenderer animationData={animations.eccom} />}
               description={`Full-featured online stores with\npayment integration and seamless shopping.\nWe build secure e-commerce platforms\nthat drive sales and customer satisfaction.\nComplete solutions for your business needs.`}
             />
             <ServiceFlipCard
               title="CRM"
-              icon={<Users className="w-16 h-16 text-indigo-400" />}
+              icon={<LottieRenderer animationData={animations.crm} />}
               description={`Customer relationship management systems\nto streamline sales and support processes.\nWe help you manage customer interactions\neffectively and improve business relationships.\nBoost your sales with our CRM solutions.`}
             />
           </div>
@@ -179,60 +477,114 @@ export default function HomePage() {
       </section>
 
       {/* 3. Featured Projects */}
-      <section className="py-32 px-6 bg-zinc-950 relative z-10">
+      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 bg-zinc-950 relative z-10">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-24 border-b border-zinc-800 pb-10">
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tighter">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 sm:mb-12 border-b border-zinc-800 pb-6 sm:pb-10">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tighter mb-4 md:mb-0">
               Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">Works</span>
             </h2>
-            <p className="text-zinc-400 max-w-md text-right mt-8 md:mt-0 text-xl font-light">
+            <p className="text-zinc-400 max-w-md text-left md:text-right mt-4 md:mt-0 text-base sm:text-lg md:text-xl font-light">
               A showcase of our recent partnerships and successful deliveries.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-            {projects.map((project, index) => (
-              <div key={`${worksPage}-${index}`} className={`${index % 2 === 1 ? 'md:translate-y-24' : ''}`}>
-                <ProjectCard {...project} />
-              </div>
+          {/* Toggle Buttons */}
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mb-8 sm:mb-12">
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-all duration-300 ${selectedCategory === cat.id
+                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+                    : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white'
+                  }`}
+              >
+                {cat.label}
+              </button>
             ))}
           </div>
 
-          <div className="flex justify-center items-center gap-4 mt-16 pt-10 border-t border-zinc-800">
-            <button
-              type="button"
-              onClick={() => setWorksPage((p) => Math.max(1, p - 1))}
-              disabled={worksPage === 1}
-              className="flex items-center justify-center w-11 h-11 rounded-lg bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-zinc-800/80 disabled:hover:text-zinc-400"
-              aria-label="Previous page"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
-            <span className="min-w-[3rem] text-center text-lg font-semibold text-white">
-              {worksPage}
-            </span>
-            <button
-              type="button"
-              onClick={() => setWorksPage((p) => Math.min(WORKS_TOTAL_PAGES, p + 1))}
-              disabled={worksPage === WORKS_TOTAL_PAGES}
-              className="flex items-center justify-center w-11 h-11 rounded-lg bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-zinc-800/80 disabled:hover:text-zinc-400"
-              aria-label="Next page"
-            >
-              <ChevronRight className="w-6 h-6" />
-            </button>
-          </div>
+
+
+          {/* Portfolio Grid */}
+          {loading ? (
+            <div className="text-center py-20">
+              <p className="text-zinc-400 text-lg">Loading portfolios...</p>
+            </div>
+          ) : portfolios.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-zinc-400 text-xl">No portfolios found. Please check if the backend server is running.</p>
+            </div>
+          ) : filteredPortfolios.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-zinc-400 text-xl">
+                {selectedCategory === 'crm'
+                  ? 'Future projects incoming'
+                  : `No ${selectedCategory} projects available yet.`}
+              </p>
+              <p className="text-zinc-500 text-sm mt-2">
+                Available categories: {[...new Set(portfolios.map(p => p.category))].join(', ')}
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 overflow-visible pb-16 sm:pb-24 md:pb-32">
+                {paginatedPortfolios.map((portfolio, index) => (
+                  <div
+                    key={portfolio._id || index}
+                    className={`${index % 2 === 1 ? 'md:translate-y-24' : ''}`}
+                  >
+                    <ProjectCard
+                      title={portfolio.name || 'Untitled'}
+                      category={portfolio.category || ''}
+                      image={portfolio.image || ''}
+                      description={portfolio.description || ''}
+                      websiteLink={portfolio.websiteLink || ''}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-4 mt-16 pt-10 border-t border-zinc-800">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="flex items-center justify-center w-11 h-11 rounded-lg bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-zinc-800/80 disabled:hover:text-zinc-400"
+                    aria-label="Previous page"
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </button>
+                  <span className="min-w-[3rem] text-center text-lg font-semibold text-white">
+                    {currentPage} / {totalPages}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="flex items-center justify-center w-11 h-11 rounded-lg bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-zinc-800/80 disabled:hover:text-zinc-400"
+                    aria-label="Next page"
+                  >
+                    <ChevronRight className="w-6 h-6" />
+                  </button>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </section>
 
       {/* 4. Contact section - two columns: heading + handshake | form */}
-      <section className="py-20 md:py-28 bg-[#f5f0ea] relative z-10">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+      <section className="py-12 sm:py-16 md:py-20 lg:py-28 bg-[#f5f0ea] relative z-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-start">
             {/* Left: heading, email, handshake image */}
             <div className="flex flex-col">
-              <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-6">
+              <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-4 sm:mb-6">
                 Let's scale your brand, together.
-              </h2> 
+              </h2>
               <div className="mt-auto pt-8">
                 <img
                   src={HANDSHAKE_IMAGE_URL}
@@ -244,74 +596,74 @@ export default function HomePage() {
 
             {/* Right: contact form */}
             <form onSubmit={handleContactSubmit} className="space-y-6 text-left">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <label className="block">
-                    <span className="text-gray-900 text-sm font-medium mb-1 block">Name</span>
-                    <input
-                      type="text"
-                      required
-                      value={contact.name}
-                      onChange={(e) => setContact((c) => ({ ...c, name: e.target.value }))}
-                      placeholder="Type name"
-                      className="w-full px-0 py-3 bg-transparent border-0 border-b border-gray-800 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-900 transition-colors"
-                    />
-                  </label>
-                  <label className="block">
-                    <span className="text-gray-900 text-sm font-medium mb-1 block">Company</span>
-                    <input
-                      type="text"
-                      required
-                      value={contact.company}
-                      onChange={(e) => setContact((c) => ({ ...c, company: e.target.value }))}
-                      placeholder="Type company name"
-                      className="w-full px-0 py-3 bg-transparent border-0 border-b border-gray-800 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-900 transition-colors"
-                    />
-                  </label>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <label className="block">
-                    <span className="text-gray-900 text-sm font-medium mb-1 block">Email</span>
-                    <input
-                      type="email"
-                      required
-                      value={contact.email}
-                      onChange={(e) => setContact((c) => ({ ...c, email: e.target.value }))}
-                      placeholder="Type email address"
-                      className="w-full px-0 py-3 bg-transparent border-0 border-b border-gray-800 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-900 transition-colors"
-                    />
-                  </label>
-                  <label className="block">
-                    <span className="text-gray-900 text-sm font-medium mb-1 block">Phone</span>
-                    <input
-                      type="tel"
-                      value={contact.phone}
-                      onChange={(e) => setContact((c) => ({ ...c, phone: e.target.value }))}
-                      placeholder="Type phone number"
-                      className="w-full px-0 py-3 bg-transparent border-0 border-b border-gray-800 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-900 transition-colors"
-                    />
-                  </label>
-                </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <label className="block">
-                  <span className="text-gray-900 text-sm font-medium mb-1 block">Want to know more? Drop us a line!</span>
-                  <textarea
+                  <span className="text-gray-900 text-sm font-medium mb-1 block">Name</span>
+                  <input
+                    type="text"
                     required
-                    rows={3}
-                    value={contact.message}
-                    onChange={(e) => setContact((c) => ({ ...c, message: e.target.value }))}
-                    placeholder="Your message"
-                    className="w-full px-0 py-3 bg-transparent border-0 border-b border-gray-800 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-900 transition-colors resize-none"
+                    value={contact.name}
+                    onChange={(e) => setContact((c) => ({ ...c, name: e.target.value }))}
+                    placeholder="Type name"
+                    className="w-full px-0 py-3 bg-transparent border-0 border-b border-gray-800 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-900 transition-colors"
                   />
                 </label>
-                <div className="pt-4 flex justify-start">
-                  <button
-                    type="submit"
-                    className="bg-black text-white px-8 justify-start py-4 text-base font-semibold hover:bg-gray-800 transition-colors rounded-full inline-flex items-center gap-2"
-                  >
-                    <span className="w-2 h-2 rounded-full bg-white justify-start" />
-                    <span className="justify-center">Get in touch</span>
-                  </button>
-                </div>
-              </form>
+                <label className="block">
+                  <span className="text-gray-900 text-sm font-medium mb-1 block">Company</span>
+                  <input
+                    type="text"
+                    required
+                    value={contact.company}
+                    onChange={(e) => setContact((c) => ({ ...c, company: e.target.value }))}
+                    placeholder="Type company name"
+                    className="w-full px-0 py-3 bg-transparent border-0 border-b border-gray-800 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-900 transition-colors"
+                  />
+                </label>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <label className="block">
+                  <span className="text-gray-900 text-sm font-medium mb-1 block">Email</span>
+                  <input
+                    type="email"
+                    required
+                    value={contact.email}
+                    onChange={(e) => setContact((c) => ({ ...c, email: e.target.value }))}
+                    placeholder="Type email address"
+                    className="w-full px-0 py-3 bg-transparent border-0 border-b border-gray-800 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-900 transition-colors"
+                  />
+                </label>
+                <label className="block">
+                  <span className="text-gray-900 text-sm font-medium mb-1 block">Phone</span>
+                  <input
+                    type="tel"
+                    value={contact.phone}
+                    onChange={(e) => setContact((c) => ({ ...c, phone: e.target.value }))}
+                    placeholder="Type phone number"
+                    className="w-full px-0 py-3 bg-transparent border-0 border-b border-gray-800 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-900 transition-colors"
+                  />
+                </label>
+              </div>
+              <label className="block">
+                <span className="text-gray-900 text-sm font-medium mb-1 block">Want to know more? Drop us a line!</span>
+                <textarea
+                  required
+                  rows={3}
+                  value={contact.message}
+                  onChange={(e) => setContact((c) => ({ ...c, message: e.target.value }))}
+                  placeholder="Your message"
+                  className="w-full px-0 py-3 bg-transparent border-0 border-b border-gray-800 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-900 transition-colors resize-none"
+                />
+              </label>
+              <div className="pt-4 flex justify-start">
+                <button
+                  type="submit"
+                  className="bg-black text-white px-8 justify-start py-4 text-base font-semibold hover:bg-gray-800 transition-colors rounded-full inline-flex items-center gap-2"
+                >
+                  <span className="w-2 h-2 rounded-full bg-white justify-start" />
+                  <span className="justify-center">Get in touch</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </section>
