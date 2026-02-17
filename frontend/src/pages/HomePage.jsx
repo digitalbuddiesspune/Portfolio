@@ -9,6 +9,7 @@ const HANDSHAKE_IMAGE_URL = "https://res.cloudinary.com/dvkxgrcbv/image/upload/v
 const ServiceFlipCard = ({ title, icon, description }) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const cardRef = React.useRef(null);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -25,29 +26,34 @@ const ServiceFlipCard = ({ title, icon, description }) => {
     }
   };
 
+  const handleMouseEnter = () => {
+    if (!isMobile && cardRef.current) {
+      cardRef.current.style.transform = 'rotateY(180deg)';
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!isMobile && cardRef.current) {
+      cardRef.current.style.transform = 'rotateY(0deg)';
+    }
+  };
+
   return (
     <div 
       className="group w-72 h-80 flex-shrink-0 cursor-pointer" 
       style={{ perspective: '1000px' }}
       onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <div
+        ref={cardRef}
         className="relative w-full h-full transition-transform duration-700 ease-in-out"
         style={{ 
           transformStyle: 'preserve-3d',
-          transform: isMobile 
-            ? (isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)')
-            : undefined
-        }}
-        onMouseEnter={(e) => {
-          if (!isMobile) {
-            e.currentTarget.style.transform = 'rotateY(180deg)';
-          }
-        }}
-        onMouseLeave={(e) => {
-          if (!isMobile) {
-            e.currentTarget.style.transform = 'rotateY(0deg)';
-          }
+          ...(isMobile && {
+            transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
+          })
         }}
       >
         {/* Front */}
