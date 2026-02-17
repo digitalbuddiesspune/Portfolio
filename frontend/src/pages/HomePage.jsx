@@ -2,6 +2,76 @@ import { useState, useEffect } from 'react';
 import { ArrowUpRight, ArrowRight, Globe, Smartphone, ShoppingCart, Users, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+// Service Flip Card Component
+const ServiceFlipCard = ({ title, icon, description }) => {
+  const [isFlipped, setIsFlipped] = useState(false);
+
+  const handleClick = () => {
+    // For mobile/touch devices
+    if (window.innerWidth < 1024) {
+      setIsFlipped(!isFlipped);
+    }
+  };
+
+  return (
+    <div 
+      className="h-[280px] w-[280px] flex-shrink-0 perspective-1000"
+      onMouseEnter={() => {
+        // Desktop hover
+        if (window.innerWidth >= 1024) {
+          setIsFlipped(true);
+        }
+      }}
+      onMouseLeave={() => {
+        // Desktop hover out
+        if (window.innerWidth >= 1024) {
+          setIsFlipped(false);
+        }
+      }}
+      onClick={handleClick}
+    >
+      <div 
+        className="relative w-full h-full transition-transform duration-700 transform-style-preserve-3d cursor-pointer"
+        style={{
+          transformStyle: 'preserve-3d',
+          transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+        }}
+      >
+        {/* Front Side */}
+        <div 
+          className="absolute inset-0 w-full h-full backface-hidden bg-gradient-to-br from-zinc-900 to-zinc-800 border border-zinc-700 rounded-2xl p-6 flex flex-col items-center justify-center shadow-xl"
+          style={{
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden',
+          }}
+        >
+          <div className="mb-4 transform transition-transform duration-300">
+            {icon}
+          </div>
+          <h3 className="text-xl font-bold text-white text-center">{title}</h3>
+        </div>
+
+        {/* Back Side */}
+        <div 
+          className="absolute inset-0 w-full h-full backface-hidden bg-gradient-to-br from-purple-900/90 to-indigo-900/90 border border-purple-500/30 rounded-2xl p-6 flex flex-col justify-center shadow-xl"
+          style={{
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden',
+            transform: 'rotateY(180deg)',
+          }}
+        >
+          <h3 className="text-xl font-bold text-white mb-4 text-center">{title}</h3>
+          <div className="space-y-2 text-white/90 text-xs leading-relaxed">
+            {description.split('\n').map((line, index) => (
+              <p key={index} className="text-center">{line}</p>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Placeholder for the generated hero image - using a high-quality Unsplash image as fallback
 const HERO_IMAGE_URL = "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2669&auto=format&fit=crop";
 
@@ -123,19 +193,27 @@ export default function HomePage() {
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-16 text-center tracking-tight">
             Services We Provide
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { title: "Web Development", icon: <Globe className="w-10 h-10 text-purple-500" />, desc: "Building scalable, high-performance web applications using modern frameworks." },
-              { title: "App Development", icon: <Smartphone className="w-10 h-10 text-yellow-500" />, desc: "Native and cross-platform mobile apps that engage users and grow your business." },
-              { title: "E-commerce Development", icon: <ShoppingCart className="w-10 h-10 text-pink-500" />, desc: "Full-featured online stores, payment integration, and seamless shopping experiences." },
-              { title: "CRM", icon: <Users className="w-10 h-10 text-indigo-400" />, desc: "Customer relationship management systems to streamline sales and support." }
-            ].map((item, i) => (
-              <div key={i} className="bg-zinc-900/50 border border-zinc-800 p-10 hover:bg-zinc-900 transition-colors group">
-                <div className="mb-6">{item.icon}</div>
-                <h3 className="text-xl font-bold mb-4 text-white group-hover:text-purple-400 transition-colors">{item.title}</h3>
-                <p className="text-zinc-400 leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
+          <div className="flex flex-nowrap justify-center items-center gap-6 lg:gap-8">
+            <ServiceFlipCard
+              title="Web Development"
+              icon={<Globe className="w-16 h-16 text-purple-500" />}
+              description={`Building scalable web applications\nusing modern frameworks and technologies.\nWe create responsive and interactive websites\nthat provide exceptional user experiences.\nOur solutions are optimized for performance.`}
+            />
+            <ServiceFlipCard
+              title="App Development"
+              icon={<Smartphone className="w-16 h-16 text-yellow-500" />}
+              description={`Native and cross-platform mobile apps\nthat engage users and grow your business.\nWe develop iOS and Android applications\nwith seamless user interfaces.\nOur apps are designed for scalability.`}
+            />
+            <ServiceFlipCard
+              title="E-commerce Development"
+              icon={<ShoppingCart className="w-16 h-16 text-pink-500" />}
+              description={`Full-featured online stores with\npayment integration and seamless shopping.\nWe build secure e-commerce platforms\nthat drive sales and customer satisfaction.\nComplete solutions for your business needs.`}
+            />
+            <ServiceFlipCard
+              title="CRM"
+              icon={<Users className="w-16 h-16 text-indigo-400" />}
+              description={`Customer relationship management systems\nto streamline sales and support processes.\nWe help you manage customer interactions\neffectively and improve business relationships.\nBoost your sales with our CRM solutions.`}
+            />
           </div>
         </div>
       </section>
