@@ -147,6 +147,7 @@ export default function HomePage() {
   const [testimonialIndex, setTestimonialIndex] = useState(0);
   const ITEMS_PER_PAGE = 4;
   const ourWorkSectionRef = React.useRef(null);
+  const testimonialsSectionRef = React.useRef(null);
   const CAROUSEL_INTERVAL_MS = 5000;
   const [animations, setAnimations] = useState({
     web: null,
@@ -550,44 +551,56 @@ export default function HomePage() {
               </div>
 
               {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex justify-center items-center gap-4 mt-16 pt-10 border-t border-zinc-800">
-                  <button
-                    type="button"
-                    onClick={() => {
+              <div className="flex justify-center items-center gap-4 mt-16 pt-10 border-t border-zinc-800">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (currentPage === 1) {
+                      // If on first page, scroll to top of portfolio section
+                      ourWorkSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    } else {
+                      // Go to previous page and scroll to portfolio section
                       setCurrentPage((p) => Math.max(1, p - 1));
-                      ourWorkSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }}
-                    disabled={currentPage === 1}
-                    className="flex items-center justify-center w-11 h-11 rounded-lg bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-zinc-800/80 disabled:hover:text-zinc-400"
-                    aria-label="Previous page"
-                  >
-                    <ChevronLeft className="w-6 h-6" />
-                  </button>
-                  <span className="min-w-[3rem] text-center text-lg font-semibold text-white">
-                    {currentPage} / {totalPages}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => {
+                      setTimeout(() => {
+                        ourWorkSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }, 100);
+                    }
+                  }}
+                  className="flex items-center justify-center w-11 h-11 rounded-lg bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700 hover:text-white transition-all"
+                  aria-label="Previous page"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <span className="min-w-[3rem] text-center text-lg font-semibold text-white">
+                  {currentPage} / {totalPages}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (currentPage === totalPages) {
+                      // If on last page, scroll to testimonials section
+                      testimonialsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    } else {
+                      // Go to next page and scroll to portfolio section
                       setCurrentPage((p) => Math.min(totalPages, p + 1));
-                      ourWorkSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }}
-                    disabled={currentPage === totalPages}
-                    className="flex items-center justify-center w-11 h-11 rounded-lg bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-zinc-800/80 disabled:hover:text-zinc-400"
-                    aria-label="Next page"
-                  >
-                    <ChevronRight className="w-6 h-6" />
-                  </button>
-                </div>
-              )}
+                      setTimeout(() => {
+                        ourWorkSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }, 100);
+                    }
+                  }}
+                  className="flex items-center justify-center w-11 h-11 rounded-lg bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700 hover:text-white transition-all"
+                  aria-label="Next page"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </div>
             </>
           )}
         </div>
       </section>
 
       {/* Client Testimonials - auto carousel */}
-      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 bg-black relative z-10">
+      <section ref={testimonialsSectionRef} className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 bg-black relative z-10">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-8 sm:mb-12 md:mb-16 text-center tracking-tight">
             Client Testimonials
