@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowUpRight, ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLottie } from "lottie-react";
 
@@ -143,12 +143,20 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [contact, setContact] = useState({ name: '', company: '', phone: '', email: '', message: '' });
+  const [testimonials, setTestimonials] = useState([]);
+  const [testimonialIndex, setTestimonialIndex] = useState(0);
   const ITEMS_PER_PAGE = 4;
+  const ourWorkSectionRef = React.useRef(null);
+  const CAROUSEL_INTERVAL_MS = 5000;
   const [animations, setAnimations] = useState({
     web: null,
     app: null,
     eccom: null,
-    crm: null
+    game: null,
+    saas: null,
+    salesforce: null,
+    cloud: null,
+    custom: null
   });
   const CONTACT_EMAIL = 'start@gamotech.com';
 
@@ -191,7 +199,11 @@ export default function HomePage() {
           web: extractData(webMod) ? JSON.parse(JSON.stringify(extractData(webMod))) : null,
           app: extractData(appMod) ? JSON.parse(JSON.stringify(extractData(appMod))) : null,
           eccom: extractData(eccomMod) ? JSON.parse(JSON.stringify(extractData(eccomMod))) : null,
-          crm: extractData(crmMod) ? JSON.parse(JSON.stringify(extractData(crmMod))) : null
+          game: extractData(crmMod) ? JSON.parse(JSON.stringify(extractData(crmMod))) : null,
+          saas: null,
+          salesforce: null,
+          cloud: null,
+          custom: null
         };
 
         // Animations loaded successfully
@@ -199,7 +211,7 @@ export default function HomePage() {
           web: loadedAnimations.web ? 'loaded' : 'null',
           app: loadedAnimations.app ? 'loaded' : 'null',
           eccom: loadedAnimations.eccom ? 'loaded' : 'null',
-          crm: loadedAnimations.crm ? 'loaded' : 'null'
+          game: loadedAnimations.game ? 'loaded' : 'null'
         });
 
         setAnimations(loadedAnimations);
@@ -247,6 +259,31 @@ export default function HomePage() {
     fetchPortfolios();
   }, []);
 
+  // Fetch testimonials from API
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/api/admin/testimonials/public');
+        const data = await response.json();
+        if (data.success && Array.isArray(data.data)) {
+          setTestimonials(data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching testimonials:', error);
+      }
+    };
+    fetchTestimonials();
+  }, []);
+
+  // Auto carousel for testimonials
+  useEffect(() => {
+    if (testimonials.length <= 1) return;
+    const timer = setInterval(() => {
+      setTestimonialIndex((i) => (i + 1) % testimonials.length);
+    }, CAROUSEL_INTERVAL_MS);
+    return () => clearInterval(timer);
+  }, [testimonials.length]);
+
   // Filter portfolios by category - more flexible matching
   const filteredPortfolios = portfolios.filter(portfolio => {
     const category = (portfolio.category || '').toLowerCase().trim();
@@ -288,8 +325,16 @@ export default function HomePage() {
     } else if (normalizedSelected.includes('app')) {
       return normalizedCategory.includes('app') ||
         normalizedCategory.includes('application');
-    } else if (normalizedSelected.includes('crm')) {
-      return normalizedCategory.includes('crm');
+    } else if (normalizedSelected.includes('game')) {
+      return normalizedCategory.includes('game');
+    } else if (normalizedSelected.includes('saas')) {
+      return normalizedCategory.includes('saas');
+    } else if (normalizedSelected.includes('salesforce')) {
+      return normalizedCategory.includes('salesforce');
+    } else if (normalizedSelected.includes('cloud')) {
+      return normalizedCategory.includes('cloud');
+    } else if (normalizedSelected.includes('custom') && normalizedSelected.includes('software')) {
+      return normalizedCategory.includes('custom') && normalizedCategory.includes('software');
     }
 
     return false;
@@ -313,7 +358,11 @@ export default function HomePage() {
     { id: 'website development', label: 'Website Development' },
     { id: 'e-commerce development', label: 'E-commerce Development' },
     { id: 'app development', label: 'App Development' },
-    { id: 'crm', label: 'CRM' }
+    { id: 'game development', label: 'Game Development' },
+    { id: 'saas', label: 'SaaS' },
+    { id: 'salesforce development', label: 'Salesforce Development' },
+    { id: 'cloud based development', label: 'Cloud Based Development' },
+    { id: 'custom software development', label: 'Custom Software Development' }
   ];
 
   return (
@@ -383,6 +432,7 @@ export default function HomePage() {
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-8 sm:mb-12 md:mb-16 text-center tracking-tight">
             Services We Provide
           </h2>
+          {/* Row 1: Original 4 cards */}
           <div className="flex flex-wrap sm:flex-nowrap justify-center items-center gap-4 sm:gap-6 lg:gap-8 overflow-x-auto pb-4 sm:pb-0">
             <ServiceFlipCard
               title="Web Development"
@@ -400,9 +450,32 @@ export default function HomePage() {
               description={`Full-featured online stores with\npayment integration and seamless shopping.\nWe build secure e-commerce platforms\nthat drive sales and customer satisfaction.\nComplete solutions for your business needs.`}
             />
             <ServiceFlipCard
-              title="CRM"
-              icon={<LottieRenderer animationData={animations.crm} />}
-              description={`Customer relationship management systems\nto streamline sales and support processes.\nWe help you manage customer interactions\neffectively and improve business relationships.\nBoost your sales with our CRM solutions.`}
+              title="Game Development"
+              icon={<LottieRenderer animationData={animations.game} />}
+              description={`Engaging games for web, mobile, and desktop.\nWe build 2D and 3D games with modern engines\nand frameworks. From concept to launch,\nwe deliver immersive experiences for players.`}
+            />
+          </div>
+          {/* Row 2: 4 new service cards */}
+          <div className="flex flex-wrap sm:flex-nowrap justify-center items-center gap-4 sm:gap-6 lg:gap-8 overflow-x-auto pt-8 sm:pt-10 lg:pt-12 pb-4 sm:pb-0">
+            <ServiceFlipCard
+              title="SaaS"
+              icon={<LottieRenderer animationData={animations.saas} />}
+              description={`Software as a Service solutions built for scale.\nWe design and develop cloud-hosted applications\nwith subscription models, multi-tenancy,\nand seamless updates for your users.`}
+            />
+            <ServiceFlipCard
+              title="Salesforce Development"
+              icon={<LottieRenderer animationData={animations.salesforce} />}
+              description={`Custom Salesforce solutions and integrations.\nWe extend and automate your CRM with Apex,\nLightning components, and connected apps\nto maximize your Salesforce investment.`}
+            />
+            <ServiceFlipCard
+              title="Cloud Based Development"
+              icon={<LottieRenderer animationData={animations.cloud} />}
+              description={`Cloud-native applications on AWS, Azure, or GCP.\nWe build scalable, secure systems with\ncontainers, serverless, and managed services\nfor reliability and cost efficiency.`}
+            />
+            <ServiceFlipCard
+              title="Custom Software Development"
+              icon={<LottieRenderer animationData={animations.custom} />}
+              description={`Tailored software for your unique workflows.\nFrom internal tools to client-facing platforms,\nwe deliver custom applications that fit\nyour business requirements exactly.`}
             />
           </div>
         </div>
@@ -450,7 +523,7 @@ export default function HomePage() {
           ) : filteredPortfolios.length === 0 ? (
             <div className="text-center py-20">
               <p className="text-zinc-400 text-xl">
-                {selectedCategory === 'crm'
+                {selectedCategory === 'game development'
                   ? 'Future projects incoming'
                   : `No ${selectedCategory} projects available yet.`}
               </p>
@@ -504,6 +577,97 @@ export default function HomePage() {
                 </div>
               )}
             </>
+          )}
+        </div>
+      </section>
+
+      {/* Client Testimonials - auto carousel */}
+      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 bg-black relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-8 sm:mb-12 md:mb-16 text-center tracking-tight">
+            Client Testimonials
+          </h2>
+          {testimonials.length === 0 ? (
+            <div className="text-center py-12 text-zinc-400">
+              <p>No testimonials yet. Check back soon.</p>
+            </div>
+          ) : (
+            <div className="flex justify-center">
+              <div className="w-full max-w-lg mx-auto">
+                {(() => {
+                  const t = testimonials[testimonialIndex];
+                  if (!t) return null;
+                  return (
+                    <div className="bg-zinc-900/90 border border-zinc-800 rounded-3xl p-8 pt-16 pb-10 shadow-xl">
+                      {/* 1. Avatar - top center, overlapping card */}
+                      <div className="flex justify-center -mt-20 mb-4 relative w-24 h-24 mx-auto">
+                        <div className="absolute inset-0 w-24 h-24 rounded-full border-4 border-amber-400/80 shadow-lg flex items-center justify-center bg-gradient-to-br from-purple-600 to-indigo-700 text-white text-2xl font-bold">
+                          {(() => {
+                            const n = (t.clientName || t.projectName || '').trim();
+                            if (!n) return '?';
+                            const parts = n.split(/\s+/).filter(Boolean);
+                            if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase().slice(0, 2);
+                            return n.slice(0, 2).toUpperCase();
+                          })()}
+                        </div>
+                        {t.avatar && (
+                          <img
+                            src={t.avatar}
+                            alt={t.projectName}
+                            className="absolute inset-0 w-24 h-24 rounded-full object-cover border-4 border-amber-400/80 shadow-lg"
+                            onError={(e) => { e.target.style.display = 'none'; }}
+                          />
+                        )}
+                      </div>
+                      {/* 2. Project name */}
+                      <h3 className="text-xl sm:text-2xl font-bold text-white text-center mb-1">
+                        {t.projectName}
+                      </h3>
+                      {/* 3. Description */}
+                      <p className="text-zinc-300 text-sm sm:text-base leading-relaxed text-left mb-4">
+                        {t.description}
+                      </p>
+                      {/* 4. Client name */}
+                      {t.clientName && (
+                        <p className="text-zinc-400 text-sm font-medium text-center mb-1">{t.clientName}</p>
+                      )}
+                      {/* 5. Location */}
+                      {t.clientLocation && (
+                        <p className="text-zinc-500 text-sm italic text-center mb-4">{t.clientLocation}</p>
+                      )}
+                      {/* 6. Stars */}
+                      <div className="flex justify-center gap-1">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star
+                            key={star}
+                            className={`w-5 h-5 sm:w-6 sm:h-6 ${
+                              star <= (t.stars || 5)
+                                ? 'text-amber-400 fill-amber-400'
+                                : 'text-zinc-600'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+          )}
+          {testimonials.length > 1 && (
+            <div className="flex justify-center gap-2 mt-8">
+              {testimonials.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setTestimonialIndex(i)}
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    i === testimonialIndex ? 'bg-purple-500 scale-125' : 'bg-zinc-600 hover:bg-zinc-500'
+                  }`}
+                  aria-label={`Go to testimonial ${i + 1}`}
+                />
+              ))}
+            </div>
           )}
         </div>
       </section>

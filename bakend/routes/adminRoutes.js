@@ -3,6 +3,7 @@ import multer from 'multer';
 import streamifier from 'streamifier';
 import { v2 as cloudinary } from 'cloudinary';
 import Portfolio from '../model/adminModal.js';
+import Testimonial from '../model/testimonialModel.js';
 import { authenticateToken } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -33,6 +34,23 @@ router.get('/portfolio/public', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error fetching portfolios',
+      error: error.message
+    });
+  }
+});
+
+// Public route: Get all testimonials (no auth required)
+router.get('/testimonials/public', async (req, res) => {
+  try {
+    const testimonials = await Testimonial.find().sort({ createdAt: -1 });
+    res.json({
+      success: true,
+      data: testimonials
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching testimonials',
       error: error.message
     });
   }
@@ -222,6 +240,113 @@ router.delete('/portfolio/:id', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error deleting portfolio item',
+      error: error.message
+    });
+  }
+});
+
+// --- Testimonials (authenticated) ---
+
+// Get all testimonials
+router.get('/testimonials', async (req, res) => {
+  try {
+    const testimonials = await Testimonial.find().sort({ createdAt: -1 });
+    res.json({
+      success: true,
+      data: testimonials
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching testimonials',
+      error: error.message
+    });
+  }
+});
+
+// Create testimonial
+router.post('/testimonials', async (req, res) => {
+  try {
+    const { avatar, projectName, description, clientName, clientLocation, stars } = req.body;
+    if (!avatar || !projectName || !description) {
+      return res.status(400).json({
+        success: false,
+        message: 'Avatar, project name and description are required'
+      });
+    }
+    const testimonial = new Testimonial({
+      avatar: avatar || '',
+      projectName: projectName || '',
+      description: description || '',
+      clientName: clientName || '',
+      clientLocation: clientLocation || '',
+      stars: Math.min(5, Math.max(1, Number(stars) || 5))
+    });
+    await testimonial.save();
+    res.status(201).json({
+      success: true,
+      message: 'Testimonial created successfully',
+      data: testimonial
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error creating testimonial',
+      error: error.message
+    });
+  }
+});
+
+// Update testimonial
+router.put('/testimonials/:id', async (req, res) => {
+  try {
+    const { avatar, projectName, description, clientName, clientLocation, stars } = req.body;
+    const testimonial = await Testimonial.findById(req.params.id);
+    if (!testimonial) {
+      return res.status(404).json({
+        success: false,
+        message: 'Testimonial not found'
+      });
+    }
+    if (avatar !== undefined) testimonial.avatar = avatar;
+    if (projectName !== undefined) testimonial.projectName = projectName;
+    if (description !== undefined) testimonial.description = description;
+    if (clientName !== undefined) testimonial.clientName = clientName;
+    if (clientLocation !== undefined) testimonial.clientLocation = clientLocation;
+    if (stars !== undefined) testimonial.stars = Math.min(5, Math.max(1, Number(stars) || 5));
+    await testimonial.save();
+    res.json({
+      success: true,
+      message: 'Testimonial updated successfully',
+      data: testimonial
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error updating testimonial',
+      error: error.message
+    });
+  }
+});
+
+// Delete testimonial
+router.delete('/testimonials/:id', async (req, res) => {
+  try {
+    const testimonial = await Testimonial.findByIdAndDelete(req.params.id);
+    if (!testimonial) {
+      return res.status(404).json({
+        success: false,
+        message: 'Testimonial not found'
+      });
+    }
+    res.json({
+      success: true,
+      message: 'Testimonial deleted successfully'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error deleting testimonial',
       error: error.message
     });
   }

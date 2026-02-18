@@ -14,8 +14,12 @@ const portfolioSchema = new mongoose.Schema(
       enum: [
         "e-commerce development",
         "website development",
-        "crm development",
         "app development",
+        "game development",
+        "saas",
+        "salesforce development",
+        "cloud based development",
+        "custom software development",
       ],
     },
 
