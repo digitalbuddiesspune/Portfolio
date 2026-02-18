@@ -171,25 +171,32 @@ export default function HomePage() {
   useEffect(() => {
     const loadAnimations = async () => {
       try {
-        const [webMod, appMod, eccomMod, crmMod] = await Promise.all([
+        const [
+          webMod,
+          appMod,
+          eccomMod,
+          gamingMod,
+          crmMod,
+          dataSecurityMod,
+          programmingMod,
+          deliverameAppMod
+        ] = await Promise.all([
           import('../utilities/web.json'),
           import('../utilities/app.json'),
           import('../utilities/eccom.json'),
-          import('../utilities/crm.json')
+          import('../utilities/gaming.json'),
+          import('../utilities/crm.json'),
+          import('../utilities/DATA SECURITY.json'),
+          import('../utilities/programming.json'),
+          import('../utilities/deliverame app.json')
         ]);
 
         // Extract the actual JSON data - Vite wraps JSON in default
         const extractData = (module) => {
           if (!module) return null;
-          // Check if it's already the data
-          if (module.v || module.layers) {
-            return module;
-          }
-          // Check default export
+          if (module.v || module.layers) return module;
           if (module.default) {
-            if (module.default.v || module.default.layers) {
-              return module.default;
-            }
+            if (module.default.v || module.default.layers) return module.default;
             return module.default;
           }
           return module;
@@ -199,20 +206,12 @@ export default function HomePage() {
           web: extractData(webMod) ? JSON.parse(JSON.stringify(extractData(webMod))) : null,
           app: extractData(appMod) ? JSON.parse(JSON.stringify(extractData(appMod))) : null,
           eccom: extractData(eccomMod) ? JSON.parse(JSON.stringify(extractData(eccomMod))) : null,
-          game: extractData(crmMod) ? JSON.parse(JSON.stringify(extractData(crmMod))) : null,
-          saas: null,
-          salesforce: null,
-          cloud: null,
-          custom: null
+          game: extractData(gamingMod) ? JSON.parse(JSON.stringify(extractData(gamingMod))) : null,
+          saas: extractData(crmMod) ? JSON.parse(JSON.stringify(extractData(crmMod))) : null,
+          salesforce: extractData(dataSecurityMod) ? JSON.parse(JSON.stringify(extractData(dataSecurityMod))) : null,
+          cloud: extractData(programmingMod) ? JSON.parse(JSON.stringify(extractData(programmingMod))) : null,
+          custom: extractData(deliverameAppMod) ? JSON.parse(JSON.stringify(extractData(deliverameAppMod))) : null
         };
-
-        // Animations loaded successfully
-        console.log('Animations loaded:', {
-          web: loadedAnimations.web ? 'loaded' : 'null',
-          app: loadedAnimations.app ? 'loaded' : 'null',
-          eccom: loadedAnimations.eccom ? 'loaded' : 'null',
-          game: loadedAnimations.game ? 'loaded' : 'null'
-        });
 
         setAnimations(loadedAnimations);
       } catch (error) {
@@ -481,8 +480,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 3. Featured Projects */}
-      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 bg-zinc-950 relative z-10">
+      {/* 3. Featured Projects (Our Work) */}
+      <section ref={ourWorkSectionRef} className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 bg-zinc-950 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 sm:mb-12 border-b border-zinc-800 pb-6 sm:pb-10">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tighter mb-4 md:mb-0">
@@ -555,7 +554,10 @@ export default function HomePage() {
                 <div className="flex justify-center items-center gap-4 mt-16 pt-10 border-t border-zinc-800">
                   <button
                     type="button"
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    onClick={() => {
+                      setCurrentPage((p) => Math.max(1, p - 1));
+                      ourWorkSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }}
                     disabled={currentPage === 1}
                     className="flex items-center justify-center w-11 h-11 rounded-lg bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-zinc-800/80 disabled:hover:text-zinc-400"
                     aria-label="Previous page"
@@ -567,7 +569,10 @@ export default function HomePage() {
                   </span>
                   <button
                     type="button"
-                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    onClick={() => {
+                      setCurrentPage((p) => Math.min(totalPages, p + 1));
+                      ourWorkSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }}
                     disabled={currentPage === totalPages}
                     className="flex items-center justify-center w-11 h-11 rounded-lg bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-zinc-800/80 disabled:hover:text-zinc-400"
                     aria-label="Next page"
