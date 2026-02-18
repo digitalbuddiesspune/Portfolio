@@ -149,6 +149,7 @@ export default function HomePage() {
   const ITEMS_PER_PAGE = 4;
   const ourWorkSectionRef = React.useRef(null);
   const testimonialsSectionRef = React.useRef(null);
+  const testimonialTouchStart = React.useRef({ x: 0 });
   const CAROUSEL_INTERVAL_MS = 5000;
   const [animations, setAnimations] = useState({
     web: null,
@@ -284,10 +285,9 @@ export default function HomePage() {
     }
   }, [testimonials.length, testimonialIndex]);
 
-  // Auto carousel for testimonials (only when more than 3 testimonials)
-  // Advance one testimonial at a time
+  // Auto carousel for testimonials (advance when more than one item)
   useEffect(() => {
-    if (testimonials.length <= 3) return;
+    if (testimonials.length <= 1) return;
     const timer = setInterval(() => {
       setTestimonialIndex((i) => (i + 1) % testimonials.length);
     }, CAROUSEL_INTERVAL_MS);
@@ -609,91 +609,203 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Client Testimonials - 3 visible, carousel one at a time */}
-      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 bg-black relative z-10">
+      {/* Client Testimonials - responsive: 1 card carousel < lg, 2 cards md-lg, 3 cards lg+ */}
+      <section className="pt-4 sm:pt-6 md:pt-8 pb-12 sm:pb-16 md:pb-20 lg:pb-24 xl:pb-32 px-4 sm:px-6 bg-black relative z-10 overflow-visible">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-8 sm:mb-12 md:mb-16 text-center tracking-tight">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 sm:mb-8 md:mb-10 lg:mb-12 xl:mb-16 text-center tracking-tight">
             Client Testimonials
           </h2>
           {testimonials.length === 0 ? (
-            <div className="text-center py-12 text-zinc-400">
+            <div className="text-center py-8 sm:py-12 text-zinc-400 text-sm sm:text-base">
               <p>No testimonials yet. Check back soon.</p>
             </div>
           ) : (
             <>
-              <div className="flex flex-wrap justify-center gap-6 lg:gap-8 max-w-6xl mx-auto">
-                {(testimonials.length <= 3
-                  ? testimonials
-                  : Array.from({ length: 3 }, (_, i) => {
-                      const idx = (testimonialIndex + i) % testimonials.length;
-                      return testimonials[idx];
-                    })
-                ).map((t) => (
-                  <div
-                    key={t._id || t.projectName + (t.clientName || '')}
-                    className="w-full max-w-[340px] bg-zinc-900/90 border border-zinc-800 rounded-3xl p-8 pt-16 pb-10 shadow-xl"
+              {/* Mobile / tablet: single-card carousel (visible below lg) */}
+              <div
+                className="lg:hidden w-full max-w-[min(340px,100%-5rem)] sm:max-w-[min(380px,100%-5rem)] mx-auto touch-pan-y overflow-visible"
+                onTouchStart={(e) => {
+                  testimonialTouchStart.current = { x: e.touches[0].clientX };
+                }}
+                onTouchEnd={(e) => {
+                  if (testimonials.length <= 1) return;
+                  const dx = e.changedTouches[0].clientX - testimonialTouchStart.current.x;
+                  if (dx > 50) setTestimonialIndex((i) => (i - 1 + testimonials.length) % testimonials.length);
+                  else if (dx < -50) setTestimonialIndex((i) => (i + 1) % testimonials.length);
+                }}
+              >
+                <div className="relative flex items-center gap-1 sm:gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setTestimonialIndex((i) => (i - 1 + testimonials.length) % testimonials.length)}
+                    className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-zinc-800/90 text-zinc-300 hover:bg-zinc-700 hover:text-white flex items-center justify-center transition-colors z-10"
+                    aria-label="Previous testimonial"
                   >
-                    <div className="flex justify-center -mt-20 mb-4 relative w-24 h-24 mx-auto">
-                      <div className="absolute inset-0 w-24 h-24 rounded-full border-4 border-white/90 shadow-lg flex items-center justify-center bg-white text-zinc-700 text-2xl font-bold">
-                        {(() => {
-                          const n = (t.clientName || t.projectName || '').trim();
-                          if (!n) return '?';
-                          const parts = n.split(/\s+/).filter(Boolean);
-                          if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase().slice(0, 2);
-                          return n.slice(0, 2).toUpperCase();
-                        })()}
-                      </div>
-                      {t.avatar && (
-                        <img
-                          src={t.avatar}
-                          alt={t.projectName}
-                          className="absolute inset-0 w-24 h-24 rounded-full object-cover border-4 border-white/90 shadow-lg"
-                          onError={(e) => { e.target.style.display = 'none'; }}
-                        />
-                      )}
-                    </div>
-                    <h3 className="text-xl sm:text-2xl font-bold text-white text-center mb-1">
-                      {t.projectName}
-                    </h3>
-                    <p className="text-zinc-300 text-sm sm:text-base leading-relaxed text-left mb-4">
-                      {t.description}
-                    </p>
-                    {t.clientName && (
-                      <p className="text-zinc-400 text-sm font-medium text-center mb-1">{t.clientName}</p>
-                    )}
-                    {t.clientLocation && (
-                      <p className="text-zinc-500 text-sm italic text-center mb-4">{t.clientLocation}</p>
-                    )}
-                    <div className="flex justify-center gap-1">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star
-                          key={star}
-                          className={`w-5 h-5 sm:w-6 sm:h-6 ${
-                            star <= (t.stars || 5)
-                              ? 'text-amber-400 fill-amber-400'
-                              : 'text-zinc-600'
-                          }`}
-                        />
-                      ))}
-                    </div>
+                    <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </button>
+                  <div className="flex-1 min-w-0 overflow-visible">
+                    {(() => {
+                      const t = testimonials[testimonialIndex];
+                      if (!t) return null;
+                      return (
+                        <div
+                          key={t._id || t.projectName + (t.clientName || '')}
+                          className="w-full max-w-[300px] sm:max-w-[340px] mx-auto bg-zinc-900/90 border border-zinc-800 rounded-2xl sm:rounded-3xl p-6 sm:p-8 pt-14 sm:pt-16 pb-8 sm:pb-10 shadow-xl overflow-visible"
+                        >
+                          {/* Same as desktop: avatar overlaps top of card via negative margin */}
+                          <div className="flex justify-center -mt-16 sm:-mt-20 mb-4 relative mx-auto overflow-visible">
+                            <div className="relative w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 rounded-full overflow-hidden border-[3px] sm:border-4 border-white/90 shadow-lg bg-white">
+                              <div className="absolute inset-0 flex items-center justify-center text-zinc-700 text-xl sm:text-2xl font-bold bg-white">
+                                {(() => {
+                                  const n = (t.clientName || t.projectName || '').trim();
+                                  if (!n) return '?';
+                                  const parts = n.split(/\s+/).filter(Boolean);
+                                  if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase().slice(0, 2);
+                                  return n.slice(0, 2).toUpperCase();
+                                })()}
+                              </div>
+                              {t.avatar && (
+                                <img
+                                  src={t.avatar}
+                                  alt={t.projectName}
+                                  className="absolute inset-0 w-full h-full object-cover"
+                                  onError={(e) => { e.target.style.display = 'none'; }}
+                                />
+                              )}
+                            </div>
+                          </div>
+                          <h3 className="text-lg sm:text-xl font-bold text-white text-center mb-1">
+                            {t.projectName}
+                          </h3>
+                          <p className="text-zinc-300 text-sm sm:text-base leading-relaxed text-left mb-4">
+                            {t.description}
+                          </p>
+                          {(t.clientName || t.clientLocation) && (
+                            <div className="flex justify-between items-center gap-2 mb-4">
+                              <span className="text-zinc-400 text-sm font-medium truncate">{t.clientName}</span>
+                              <span className="text-zinc-500 text-sm italic truncate">{t.clientLocation}</span>
+                            </div>
+                          )}
+                          <div className="flex justify-center gap-1">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <Star
+                                key={star}
+                                className={`w-5 h-5 sm:w-6 sm:h-6 ${
+                                  star <= (t.stars || 5)
+                                    ? 'text-amber-400 fill-amber-400'
+                                    : 'text-zinc-600'
+                                }`}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
-                ))}
+                  <button
+                    type="button"
+                    onClick={() => setTestimonialIndex((i) => (i + 1) % testimonials.length)}
+                    className="flex-shrink-0 w-10 h-10 rounded-full bg-zinc-800/90 text-zinc-300 hover:bg-zinc-700 hover:text-white flex items-center justify-center transition-colors z-10"
+                    aria-label="Next testimonial"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </div>
+                {testimonials.length > 1 && (
+                  <div className="flex justify-center gap-2 mt-6">
+                    {testimonials.map((_, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => setTestimonialIndex(i)}
+                        className={`w-2 h-2 rounded-full transition-colors ${
+                          i === testimonialIndex ? 'bg-purple-500 scale-125' : 'bg-zinc-600 hover:bg-zinc-500'
+                        }`}
+                        aria-label={`Go to testimonial ${i + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
-              {testimonials.length > 3 && (
-                <div className="flex justify-center gap-2 mt-8">
-                  {testimonials.map((_, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={() => setTestimonialIndex(i)}
-                      className={`w-2 h-2 rounded-full transition-colors ${
-                        i === testimonialIndex ? 'bg-purple-500 scale-125' : 'bg-zinc-600 hover:bg-zinc-500'
-                      }`}
-                      aria-label={`Go to testimonial ${i + 1}`}
-                    />
+
+              {/* Desktop: 2 cards on lg, 3 on xl (visible from lg up) */}
+              <div className="hidden lg:block">
+                <div className="flex flex-wrap justify-center gap-4 lg:gap-6 xl:gap-8 max-w-5xl xl:max-w-6xl mx-auto">
+                  {(testimonials.length <= 3
+                    ? testimonials
+                    : Array.from({ length: 3 }, (_, i) => {
+                        const idx = (testimonialIndex + i) % testimonials.length;
+                        return testimonials[idx];
+                      })
+                  ).map((t) => (
+                    <div
+                      key={t._id || t.projectName + (t.clientName || '')}
+                      className="w-full max-w-[300px] xl:max-w-[340px] bg-zinc-900/90 border border-zinc-800 rounded-2xl xl:rounded-3xl p-6 xl:p-8 pt-14 xl:pt-16 pb-8 xl:pb-10 shadow-xl overflow-visible"
+                    >
+                      <div className="flex justify-center -mt-16 xl:-mt-20 mb-4 relative mx-auto overflow-visible">
+                        <div className="relative w-20 h-20 xl:w-24 xl:h-24 flex-shrink-0 rounded-full overflow-hidden border-[3px] xl:border-4 border-white/90 shadow-lg bg-white">
+                          <div className="absolute inset-0 flex items-center justify-center text-zinc-700 text-xl xl:text-2xl font-bold bg-white">
+                            {(() => {
+                              const n = (t.clientName || t.projectName || '').trim();
+                              if (!n) return '?';
+                              const parts = n.split(/\s+/).filter(Boolean);
+                              if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase().slice(0, 2);
+                              return n.slice(0, 2).toUpperCase();
+                            })()}
+                          </div>
+                          {t.avatar && (
+                            <img
+                              src={t.avatar}
+                              alt={t.projectName}
+                              className="absolute inset-0 w-full h-full object-cover"
+                              onError={(e) => { e.target.style.display = 'none'; }}
+                            />
+                          )}
+                        </div>
+                      </div>
+                      <h3 className="text-lg xl:text-xl font-bold text-white text-center mb-1">
+                        {t.projectName}
+                      </h3>
+                      <p className="text-zinc-300 text-sm leading-relaxed text-left mb-3 xl:mb-4">
+                        {t.description}
+                      </p>
+                      {(t.clientName || t.clientLocation) && (
+                        <div className="flex justify-between items-center gap-2 mb-3 xl:mb-4">
+                          <span className="text-zinc-400 text-sm font-medium truncate">{t.clientName}</span>
+                          <span className="text-zinc-500 text-sm italic truncate">{t.clientLocation}</span>
+                        </div>
+                      )}
+                      <div className="flex justify-center gap-1">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star
+                            key={star}
+                            className={`w-4 h-4 xl:w-5 xl:h-5 ${
+                              star <= (t.stars || 5)
+                                ? 'text-amber-400 fill-amber-400'
+                                : 'text-zinc-600'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   ))}
                 </div>
-              )}
+                {testimonials.length > 3 && (
+                  <div className="flex justify-center gap-2 mt-6 xl:mt-8">
+                    {testimonials.map((_, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => setTestimonialIndex(i)}
+                        className={`w-2 h-2 rounded-full transition-colors ${
+                          i === testimonialIndex ? 'bg-purple-500 scale-125' : 'bg-zinc-600 hover:bg-zinc-500'
+                        }`}
+                        aria-label={`Go to testimonial ${i + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
             </>
           )}
         </div>
