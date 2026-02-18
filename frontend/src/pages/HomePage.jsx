@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ArrowUpRight, ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLottie } from "lottie-react";
+import API_BASE_URL from "../config/api.js";
 
 // Wrapper so useLottie hook is called in a stable component (not recreated each render)
 function LottieView({ animationData }) {
@@ -241,7 +242,7 @@ export default function HomePage() {
     const fetchPortfolios = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:3000/api/admin/portfolio/public');
+        const response = await fetch(`${API_BASE_URL}/api/admin/portfolio/public`);
         const data = await response.json();
         console.log('Portfolio API Response:', data);
         if (data.success) {
@@ -263,7 +264,7 @@ export default function HomePage() {
   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/admin/testimonials/public');
+        const response = await fetch(`${API_BASE_URL}/api/admin/testimonials/public`);
         const data = await response.json();
         if (data.success && Array.isArray(data.data)) {
           setTestimonials(data.data);

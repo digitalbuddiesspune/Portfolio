@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Edit2, Trash2, Save, LogOut, Package, LayoutGrid, Upload, Loader2, MessageCircle } from 'lucide-react';
+import API_BASE_URL from '../config/api.js';
 
-const API_URL = 'http://localhost:3000/api/admin';
+const API_URL = `${API_BASE_URL}/api/admin`;
 
 export default function AdminDashboard() {
   const [portfolios, setPortfolios] = useState([]);
@@ -205,7 +206,7 @@ export default function AdminDashboard() {
       try {
         data = raw ? JSON.parse(raw) : {};
       } catch {
-        setError(response.ok ? 'Invalid response from server.' : `Upload failed (${response.status}). Is the backend running on port 3000?`);
+        setError(response.ok ? 'Invalid response from server.' : `Upload failed (${response.status}). Please check if the backend server is running.`);
         return;
       }
       if (data.success && data.url) {

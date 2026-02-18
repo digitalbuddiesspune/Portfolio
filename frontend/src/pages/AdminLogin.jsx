@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, Mail, LogIn, Shield } from 'lucide-react';
+import API_BASE_URL from '../config/api.js';
 
-const API_URL = 'http://localhost:3000/api/auth';
+const API_URL = `${API_BASE_URL}/api/auth`;
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
