@@ -14,8 +14,8 @@ function LottieView({ animationData }) {
   return <div className="w-32 h-32 flex items-center justify-center">{View}</div>;
 }
 
-// Placeholder for the generated hero image - using a high-quality Unsplash image as fallback
-const HERO_IMAGE_URL = "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2669&auto=format&fit=crop";
+// Corporate office/building hero image with parallax effect
+const HERO_IMAGE_URL = "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2670&auto=format&fit=crop";
 // Contact section - handshake illustration (replace with your asset if needed)
 const HANDSHAKE_IMAGE_URL = "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1771311023/Untitled_1600_x_900_px_my29is.png";
 
@@ -42,18 +42,22 @@ const ServiceFlipCard = ({ title, icon, description }) => {
   const handleMouseEnter = () => {
     if (!isMobile && cardRef.current) {
       cardRef.current.style.transform = 'rotateY(180deg)';
+      // Hide scrollbar when hovering
+      document.body.classList.add('hide-scrollbar');
     }
   };
 
   const handleMouseLeave = () => {
     if (!isMobile && cardRef.current) {
       cardRef.current.style.transform = 'rotateY(0deg)';
+      // Show scrollbar when not hovering
+      document.body.classList.remove('hide-scrollbar');
     }
   };
 
   return (
     <div 
-      className="group w-72 h-80 flex-shrink-0 cursor-pointer" 
+      className="group w-72 h-80 flex-shrink-0 cursor-pointer overflow-hidden"
       style={{ perspective: '1000px' }}
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
@@ -64,6 +68,7 @@ const ServiceFlipCard = ({ title, icon, description }) => {
         className="relative w-full h-full transition-transform duration-700 ease-in-out"
         style={{ 
           transformStyle: 'preserve-3d',
+          transformOrigin: 'center center',
           ...(isMobile && {
             transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
           })
@@ -108,6 +113,8 @@ const ProjectCard = ({ title, category, image, description, websiteLink }) => {
       target={websiteLink ? "_blank" : undefined}
       rel={websiteLink ? "noopener noreferrer" : undefined}
       className="group relative w-full aspect-[4/3] overflow-hidden bg-zinc-900 border border-zinc-800 rounded-2xl cursor-pointer shadow-lg hover:shadow-purple-900/20 transition-all duration-500 block"
+      onMouseEnter={() => document.body.classList.add('hide-scrollbar')}
+      onMouseLeave={() => document.body.classList.remove('hide-scrollbar')}
     >
       <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-all duration-500 z-10" />
       <img
@@ -381,7 +388,7 @@ export default function HomePage() {
       {/* 1. Static Hero - content below scrolls over it */}
       <section className="fixed top-0 left-0 right-0 h-[90vh] z-0 w-full flex items-center overflow-hidden">
 
-        {/* Background Image */}
+        {/* Background Image - Static */}
         <div className="absolute inset-0 w-full h-full">
           <img
             src={HERO_IMAGE_URL}
@@ -393,25 +400,10 @@ export default function HomePage() {
         </div>
 
         {/* Main Content Grid */}
-        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center h-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col items-center justify-center h-full">
 
-          {/* Left: GAMOTECH Title - aligned left edge */}
-          <div className="text-center md:text-left flex flex-col justify-center items-center md:items-start w-full">
-            <h2 className="text-sm md:text-lg text-zinc-300 mb-6 font-bold tracking-[0.3em] uppercase animate-fadeInUp shadow-black/50 drop-shadow-md w-full md:w-auto">
-              Reviewing The Future
-            </h2>
-
-            {/* GAMOTECH Split Animation (White Text) - same left edge as tagline */}
-            <div className="group cursor-default md:text-left w-full flex justify-center md:justify-start">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold tracking-tighter text-white flex justify-center md:justify-start items-center gap-2 md:gap-3 lg:gap-4 drop-shadow-2xl">
-                <span className="inline-block transition-transform duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:-translate-x-8 md:group-hover:-translate-x-12 lg:group-hover:-translate-x-16">GAMO</span>
-                <span className="inline-block transition-transform duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:translate-x-8 md:group-hover:translate-x-12 lg:group-hover:translate-x-16">TECH</span>
-              </h1>
-            </div>
-          </div>
-
-          {/* Right: Feature Gradient Box - aligned to bottom */}
-          <div className="flex justify-center md:justify-end items-center animate-fadeInUp self-center" style={{ animationDelay: '0.4s' }}>
+          {/* Feature Gradient Box - centered horizontally */}
+          <div className="flex justify-center items-center animate-fadeInUp">
             <div className="w-full max-w-md p-10 md:p-14 rounded-none md:rounded-lg backdrop-blur-md shadow-2xl relative overflow-hidden"
               style={{
                 background: 'linear-gradient(135deg, rgba(67,35,35,0.7), rgba(182,174,159,0.65), rgba(67,35,35,0.7))'
@@ -437,13 +429,13 @@ export default function HomePage() {
       {/* Spacer so content starts below hero; scrolling content has higher z so it slides over hero */}
       <div className="relative z-10 h-[90vh] shrink-0" aria-hidden="true" />
       {/* 2. Services We Provide */}
-      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 bg-black relative z-10">
+      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 bg-black relative z-10 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-8 sm:mb-12 md:mb-16 text-center tracking-tight">
             Services We Provide
           </h2>
           {/* Row 1: Original 4 cards */}
-          <div className="flex flex-wrap sm:flex-nowrap justify-center items-center gap-4 sm:gap-6 lg:gap-8 overflow-x-auto pb-4 sm:pb-0">
+          <div className="flex flex-wrap sm:flex-nowrap justify-center items-center gap-4 sm:gap-6 lg:gap-8 overflow-x-auto overflow-y-hidden pb-4 sm:pb-0 px-2">
             <ServiceFlipCard
               title="Web Development"
               icon={<LottieRenderer animationData={animations.web} />}
@@ -466,7 +458,7 @@ export default function HomePage() {
             />
           </div>
           {/* Row 2: 4 new service cards */}
-          <div className="flex flex-wrap sm:flex-nowrap justify-center items-center gap-4 sm:gap-6 lg:gap-8 overflow-x-auto pt-8 sm:pt-10 lg:pt-12 pb-4 sm:pb-0">
+          <div className="flex flex-wrap sm:flex-nowrap justify-center items-center gap-4 sm:gap-6 lg:gap-8 overflow-x-auto overflow-y-hidden pt-8 sm:pt-10 lg:pt-12 pb-4 sm:pb-0 px-2">
             <ServiceFlipCard
               title="SaaS"
               icon={<LottieRenderer animationData={animations.saas} />}

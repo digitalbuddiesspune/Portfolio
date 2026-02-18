@@ -53,9 +53,56 @@
   --font-outfit: 'Outfit', sans-serif;
 }
 
+/* Hide scrollbar globally for all scrollable elements */
+
+html {
+  overflow-x: hidden;
+  /* Hide scrollbar but keep scrolling functionality */
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+html::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, Opera */
+  width: 0 !important;
+  height: 0 !important;
+}
+
 body {
   font-family: 'Outfit', sans-serif;
   @apply bg-black text-white;
+  overflow-x: hidden;
+  /* Hide scrollbar but keep scrolling functionality */
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+body::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, Opera */
+  width: 0 !important;
+  height: 0 !important;
+}
+
+#root {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+#root::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, Opera */
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Hide scrollbar when hovering over service cards */
+body.hide-scrollbar {
+  overflow-y: hidden;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+body.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 /* About page animations */
