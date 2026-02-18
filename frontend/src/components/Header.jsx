@@ -55,7 +55,7 @@ export default function Header() {
             <img
               src={LOGO_URL}
               alt="Gamotech"
-              className="h-10 w-auto object-contain opacity-100 transition-opacity"
+              className="h-8 sm:h-10 md:h-14 w-auto object-contain opacity-100 transition-opacity"
             />
             {/* White Text for the new dark hero */} 
           </Link>
