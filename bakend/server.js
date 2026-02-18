@@ -5,6 +5,8 @@ import cors from 'cors';
 import { v2 as cloudinary } from 'cloudinary';
 import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import Portfolio from './model/adminModal.js';
+import Testimonial from './model/testimonialModel.js';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -18,13 +20,13 @@ cloudinary.config({
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// CORS: allow frontend (must be before any routes that can send 403/401)
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Get PORT and DBURL from .env
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 const DBURL = process.env.DBURL;
 
 // MongoDB Connection
@@ -63,6 +65,25 @@ app.get('/health', (req, res) => {
 
 // API Routes
 app.use('/api/auth', authRoutes);
+
+// Public read-only API (no auth) – must be before admin routes so they match first
+app.get('/api/admin/portfolio/public', async (req, res) => {
+  try {
+    const portfolios = await Portfolio.find().sort({ createdAt: -1 });
+    res.json({ success: true, data: portfolios });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error fetching portfolios', error: error.message });
+  }
+});
+app.get('/api/admin/testimonials/public', async (req, res) => {
+  try {
+    const testimonials = await Testimonial.find().sort({ createdAt: -1 });
+    res.json({ success: true, data: testimonials });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error fetching testimonials', error: error.message });
+  }
+});
+
 app.use('/api/admin', adminRoutes);
 
 // Start server
@@ -75,7 +96,7 @@ const server = app.listen(PORT, () => {
 server.on('error', (error) => {
   if (error.code === 'EADDRINUSE') {
     console.error(`❌ Port ${PORT} is already in use. Please stop the other process or use a different port.`);
-    console.error(`💡 To find and kill the process: netstat -ano | findstr :${PORT}`);
+    console.error(`💡 On macOS: lsof -i :${PORT}  then  kill -9 <PID>`);
   } else {
     console.error('❌ Server error:', error);
   }
