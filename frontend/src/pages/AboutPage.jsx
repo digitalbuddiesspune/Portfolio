@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 
 const HERO_IMAGE_URL =
   'https://res.cloudinary.com/dvkxgrcbv/image/upload/v1771227140/Untitled_1920_x_600_px_1920_x_700_px_cq4vwz.png';
+const MOBILE_HERO_IMAGE_URL =
+  'https://res.cloudinary.com/dvkxgrcbv/image/upload/v1771331559/office_meeting_1080x1080_svzdxg.png';
 
 const FOUNDER = {
   name: 'Vinay Mathure',
@@ -47,10 +49,17 @@ export default function AboutPage() {
       {/* Static hero - content below scrolls over it */}
       <section className="fixed top-0 left-0 right-0 h-[85vh] z-0 flex items-center overflow-hidden">
         <div className="absolute inset-0 w-full h-full">
+          {/* Desktop Hero Image */}
           <img
             src={HERO_IMAGE_URL}
             alt="About Gamotech"
-            className="w-full h-full object-cover"
+            className="hidden md:block w-full h-full object-cover"
+          />
+          {/* Mobile Hero Image */}
+          <img
+            src={MOBILE_HERO_IMAGE_URL}
+            alt="About Gamotech"
+            className="block md:hidden w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-black/50" />
         </div>
