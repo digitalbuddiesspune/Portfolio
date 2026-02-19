@@ -647,15 +647,6 @@ export default function HomePage() {
                           {/* Same as desktop: avatar overlaps top of card via negative margin */}
                           <div className="flex justify-center -mt-16 sm:-mt-20 mb-4 relative mx-auto overflow-visible">
                             <div className="relative w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 rounded-full overflow-hidden border-[3px] sm:border-4 border-white/90 shadow-lg bg-white">
-                              <div className="absolute inset-0 flex items-center justify-center text-zinc-700 text-xl sm:text-2xl font-bold bg-white">
-                                {(() => {
-                                  const n = (t.clientName || t.projectName || '').trim();
-                                  if (!n) return '?';
-                                  const parts = n.split(/\s+/).filter(Boolean);
-                                  if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase().slice(0, 2);
-                                  return n.slice(0, 2).toUpperCase();
-                                })()}
-                              </div>
                               {t.avatar && (
                                 <img
                                   src={t.avatar}
@@ -736,15 +727,6 @@ export default function HomePage() {
                     >
                       <div className="flex justify-center -mt-16 xl:-mt-20 mb-4 relative mx-auto overflow-visible">
                         <div className="relative w-20 h-20 xl:w-24 xl:h-24 flex-shrink-0 rounded-full overflow-hidden border-[3px] xl:border-4 border-white/90 shadow-lg bg-white">
-                          <div className="absolute inset-0 flex items-center justify-center text-zinc-700 text-xl xl:text-2xl font-bold bg-white">
-                            {(() => {
-                              const n = (t.clientName || t.projectName || '').trim();
-                              if (!n) return '?';
-                              const parts = n.split(/\s+/).filter(Boolean);
-                              if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase().slice(0, 2);
-                              return n.slice(0, 2).toUpperCase();
-                            })()}
-                          </div>
                           {t.avatar && (
                             <img
                               src={t.avatar}
