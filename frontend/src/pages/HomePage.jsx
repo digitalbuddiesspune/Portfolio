@@ -525,7 +525,7 @@ export default function HomePage() {
           ) : filteredPortfolios.length === 0 ? (
             <div className="text-center py-20">
               <p className="text-zinc-400 text-xl">
-                {selectedCategory === 'game development'
+                {['game development', 'saas', 'salesforce development', 'cloud based development', 'custom software development'].includes(selectedCategory)
                   ? 'Future projects incoming'
                   : `No ${selectedCategory} projects available yet.`}
               </p>
