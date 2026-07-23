@@ -70,5 +70,38 @@ export default function Header() {
         </nav>
       </header>
     </>
+    <>
+      <style>{`
+        @keyframes letterDrop {
+          from { transform: translateY(-30px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+      `}</style>
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled
+            ? 'bg-black/95 text-white backdrop-blur shadow-md py-4'
+            : 'bg-transparent text-white py-8'
+          }`}
+      >
+        <nav className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-3 shrink-0 group">
+            <img
+              src={logo}
+              alt="Gamotech"
+              className="h-8 sm:h-10 md:h-14 w-auto object-contain opacity-100 transition-opacity"
+            />
+            {/* White Text for the new dark hero */} 
+          </Link>
+          <ul className="flex items-center gap-10">
+            <li>
+              <AnimatedNavLink to="/">Home</AnimatedNavLink>
+            </li>
+            <li>
+              <AnimatedNavLink to="/about">About</AnimatedNavLink>
+            </li>
+          </ul>
+        </nav>
+      </header>
+    </>
   );
 }

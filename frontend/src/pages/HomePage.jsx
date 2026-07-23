@@ -876,6 +876,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Solid black so fixed hero does not show through below contact */}
+      <div className="relative z-10 bg-black h-16 sm:h-24" aria-hidden="true" />
     </main>
   );
 }
