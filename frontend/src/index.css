@@ -45,12 +45,14 @@
   }
 
   .font-outfit {
-    font-family: 'Outfit', sans-serif;
+    font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
   }
 }
 
 @theme {
-  --font-outfit: 'Outfit', sans-serif;
+  --font-outfit: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-sans: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 }
 
 /* Hide scrollbar globally for all scrollable elements */
@@ -69,7 +71,7 @@ html::-webkit-scrollbar {
 }
 
 body {
-  font-family: 'Outfit', sans-serif;
+  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
   @apply bg-black text-white;
   overflow-x: hidden;
   /* Hide scrollbar but keep scrolling functionality */

@@ -1,5 +1,6 @@
 import { Link, useLocation, NavLink } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import logo from '../assets/GAMOTECH LOGO (2).png';
 
 // Custom Animated Nav Link Component
 const AnimatedNavLink = ({ to, children }) => {
@@ -26,7 +27,6 @@ const AnimatedNavLink = ({ to, children }) => {
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const LOGO_URL = 'https://res.cloudinary.com/dvkxgrcbv/image/upload/v1765977541/Asset_7_kium0j.png';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -53,7 +53,7 @@ export default function Header() {
         <nav className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 shrink-0 group">
             <img
-              src={LOGO_URL}
+              src={logo}
               alt="Gamotech"
               className="h-8 sm:h-10 md:h-14 w-auto object-contain opacity-100 transition-opacity"
             />

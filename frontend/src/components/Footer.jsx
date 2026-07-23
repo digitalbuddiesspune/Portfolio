@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { MapPin, Mail, Phone } from 'lucide-react';
-
-const LOGO_URL = 'https://res.cloudinary.com/dvkxgrcbv/image/upload/v1765977541/Asset_7_kium0j.png';
+import logo from '../assets/GAMOTECH LOGO (2).png';
 
 const FOOTER_DESCRIPTION =
   "Gamotech IT & Web Solutions transforms business ideas into impactful digital experiences through innovative, high-performance web and IT solutions that help brands stay ahead of the competition.";
@@ -17,7 +16,7 @@ export default function Footer() {
           <div>
             <Link to="/" className="inline-block">
               <img
-                src={LOGO_URL}
+                src={logo}
                 alt="Gamotech"
                 className="h-9 w-auto object-contain"
               />
