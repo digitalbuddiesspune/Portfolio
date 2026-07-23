@@ -69,8 +69,8 @@ export default function Header() {
           </ul>
         </nav>
       </header>
-    </>
-    <>
+  
+   
       <style>{`
         @keyframes letterDrop {
           from { transform: translateY(-30px); opacity: 0; }
@@ -102,6 +102,7 @@ export default function Header() {
           </ul>
         </nav>
       </header>
-    </>
+      </>
+   
   );
 }
