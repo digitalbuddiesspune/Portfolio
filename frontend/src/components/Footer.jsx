@@ -1,21 +1,19 @@
 import { Link } from 'react-router-dom';
-
-const LOGO_URL = 'https://res.cloudinary.com/dvkxgrcbv/image/upload/v1765977541/Asset_7_kium0j.png';
+import logo from '../assets/logo.png';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-black border-t border-white/10 mt-auto">
+    <footer className="bg-black border-t border-white/10 mt-auto relative z-10">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
           <Link to="/" className="flex items-center gap-2">
             <img
-              src={LOGO_URL}
+              src={logo}
               alt="Gamotech"
-              className="h-8 w-auto object-contain opacity-90"
+              className="h-8 sm:h-10 w-auto object-contain opacity-90"
             />
-            <span className="font-bold text-white">Gamotech</span>
           </Link>
           <ul className="flex items-center gap-6">
             <li>
