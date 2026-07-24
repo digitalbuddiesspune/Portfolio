@@ -22,14 +22,14 @@ function App() {
       <Routes>
         {/* Public Routes with Header and Footer */}
         <Route path="/" element={
-          <div className="min-h-screen flex flex-col bg-white text-black">
+          <div className="min-h-screen bg-white text-black">
             <Header />
             <HomePage />
             <Footer />
           </div>
         } />
         <Route path="/about" element={
-          <div className="min-h-screen flex flex-col bg-white text-black">
+          <div className="min-h-screen bg-white text-black">
             <Header />
             <AboutPage />
             <Footer />

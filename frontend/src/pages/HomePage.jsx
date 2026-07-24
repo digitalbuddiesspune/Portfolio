@@ -1,236 +1,200 @@
 import React, { useState, useEffect } from "react";
-import { ArrowUpRight, ChevronLeft, ChevronRight, Star } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useLottie } from "lottie-react";
+import {
+  ArrowUpRight,
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Star,
+  Monitor,
+  ShoppingCart,
+  Smartphone,
+  Cloud,
+  CloudUpload,
+  Gamepad2,
+  Building2,
+  ExternalLink,
+  Briefcase,
+  Code2,
+  Clock,
+  Link2,
+  FileText,
+  Rocket,
+  Smile,
+  ShieldCheck,
+  Globe,
+} from "lucide-react";
 import API_BASE_URL from "../config/api.js";
+import heroDashboard from "../assets/hero-dashboard.png";
 
-// Wrapper so useLottie hook is called in a stable component (not recreated each render)
-function LottieView({ animationData }) {
-  const { View } = useLottie({
-    animationData,
-    loop: true,
-    style: { width: 120, height: 120 }
-  });
-  return <div className="w-32 h-32 flex items-center justify-center">{View}</div>;
-}
-
-// Corporate office/building hero image with parallax effect
-const HERO_IMAGE_URL = "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2670&auto=format&fit=crop";
 // Contact section - handshake illustration (replace with your asset if needed)
 const HANDSHAKE_IMAGE_URL = "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1771311023/Untitled_1600_x_900_px_my29is.png";
 
-const ServiceFlipCard = ({ title, icon, description }) => {
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const cardRef = React.useRef(null);
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+const SERVICES = [
+  {
+    title: "Web Development",
+    description: "Modern, responsive websites built for speed, SEO, and conversion.",
+    Icon: Monitor,
+    accent: {
+      dot: "bg-purple-400 shadow-[0_0_10px_rgba(192,132,252,0.9)]",
+      halo: "bg-purple-500/25",
+      ring: "border-purple-400/40",
+      icon: "text-purple-300",
+      btn: "border-purple-400/50 text-purple-300 hover:bg-purple-500/15",
+    },
+  },
+  {
+    title: "App Development",
+    description: "iOS & Android apps with smooth UX and scalable architecture.",
+    Icon: Smartphone,
+    accent: {
+      dot: "bg-blue-400 shadow-[0_0_10px_rgba(96,165,250,0.9)]",
+      halo: "bg-blue-500/25",
+      ring: "border-blue-400/40",
+      icon: "text-blue-300",
+      btn: "border-blue-400/50 text-blue-300 hover:bg-blue-500/15",
+    },
+  },
+  {
+    title: "E-commerce Development",
+    description: "High-converting online stores with secure payments & inventory.",
+    Icon: ShoppingCart,
+    accent: {
+      dot: "bg-orange-400 shadow-[0_0_10px_rgba(251,146,60,0.9)]",
+      halo: "bg-orange-500/25",
+      ring: "border-orange-400/40",
+      icon: "text-orange-300",
+      btn: "border-orange-400/50 text-orange-300 hover:bg-orange-500/15",
+    },
+  },
+  {
+    title: "Game Development",
+    description: "Engaging 2D/3D games for web and mobile platforms.",
+    Icon: Gamepad2,
+    accent: {
+      dot: "bg-pink-400 shadow-[0_0_10px_rgba(244,114,182,0.9)]",
+      halo: "bg-pink-500/25",
+      ring: "border-pink-400/40",
+      icon: "text-pink-300",
+      btn: "border-pink-400/50 text-pink-300 hover:bg-pink-500/15",
+    },
+  },
+  {
+    title: "SaaS Development",
+    description: "Multi-tenant SaaS products with billing and dashboards.",
+    Icon: Cloud,
+    accent: {
+      dot: "bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.9)]",
+      halo: "bg-cyan-500/25",
+      ring: "border-cyan-400/40",
+      icon: "text-cyan-300",
+      btn: "border-cyan-400/50 text-cyan-300 hover:bg-cyan-500/15",
+    },
+  },
+  {
+    title: "Salesforce Development",
+    description: "Custom Salesforce apps, Apex, and CRM automation.",
+    Icon: Building2,
+    accent: {
+      dot: "bg-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.9)]",
+      halo: "bg-sky-500/25",
+      ring: "border-sky-400/40",
+      icon: "text-sky-300",
+      btn: "border-sky-400/50 text-sky-300 hover:bg-sky-500/15",
+    },
+  },
+  {
+    title: "Cloud Based Development",
+    description: "Cloud-native systems on AWS, Azure, and GCP.",
+    Icon: CloudUpload,
+    accent: {
+      dot: "bg-violet-400 shadow-[0_0_10px_rgba(167,139,250,0.9)]",
+      halo: "bg-violet-500/25",
+      ring: "border-violet-400/40",
+      icon: "text-violet-300",
+      btn: "border-violet-400/50 text-violet-300 hover:bg-violet-500/15",
+    },
+  },
+  {
+    title: "Custom Software Development",
+    description: "Bespoke software tailored to your business workflows.",
+    Icon: Code2,
+    accent: {
+      dot: "bg-fuchsia-400 shadow-[0_0_10px_rgba(232,121,249,0.9)]",
+      halo: "bg-fuchsia-500/25",
+      ring: "border-fuchsia-400/40",
+      icon: "text-fuchsia-300",
+      btn: "border-fuchsia-400/50 text-fuchsia-300 hover:bg-fuchsia-500/15",
+    },
+  },
+];
 
-  const handleClick = () => {
-    if (isMobile) {
-      setIsFlipped(!isFlipped);
-    }
-  };
+const ServiceCard = ({ title, description, Icon, accent }) => (
+  <article className="group relative flex flex-col items-center rounded-2xl bg-white/[0.03] backdrop-blur-sm px-4 pt-5 pb-4 transition-all duration-300 hover:bg-white/[0.06]">
+    {/* Top-left glow dot */}
+    <span className={`absolute top-3.5 left-3.5 w-1.5 h-1.5 rounded-full ${accent.dot}`} aria-hidden />
 
-  const handleMouseEnter = () => {
-    if (!isMobile && cardRef.current) {
-      cardRef.current.style.transform = 'rotateY(180deg)';
-      // Hide scrollbar when hovering
-      document.body.classList.add('hide-scrollbar');
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (!isMobile && cardRef.current) {
-      cardRef.current.style.transform = 'rotateY(0deg)';
-      // Show scrollbar when not hovering
-      document.body.classList.remove('hide-scrollbar');
-    }
-  };
-
-  return (
-    <div 
-      className="group w-72 h-80 flex-shrink-0 cursor-pointer overflow-hidden"
-      style={{ perspective: '1000px' }}
-      onClick={handleClick}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <div
-        ref={cardRef}
-        className="relative w-full h-full transition-transform duration-700 ease-in-out"
-        style={{ 
-          transformStyle: 'preserve-3d',
-          transformOrigin: 'center center',
-          ...(isMobile && {
-            transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
-          })
-        }}
-      >
-        {/* Front */}
-        <div
-          className="absolute inset-0 rounded-tl-none rounded-br-none rounded-tr-[50px] rounded-bl-[50px] border border-zinc-800 bg-zinc-900/90 backdrop-blur p-8 flex flex-col items-center justify-center"
-          style={{ backfaceVisibility: 'hidden' }}
-        >
-          <div className="mb-4">{icon}</div>
-          <h3 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600 text-center drop-shadow-sm">{title}</h3>
-        </div>
-        {/* Back */}
-        <div
-          className="absolute inset-0 rounded-tl-none rounded-br-none rounded-tr-[50px] rounded-bl-[50px] border border-zinc-800 bg-zinc-800/95 backdrop-blur p-6 flex flex-col items-center justify-center"
-          style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
-        >
-          <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600 mb-3 text-center">{title}</h3>
-          <p className="text-zinc-300 text-sm leading-relaxed text-center whitespace-pre-line">{description}</p>
-        </div>
+    {/* Icon with soft halo */}
+    <div className="relative flex items-center justify-center w-16 h-16 mb-3">
+      <span className={`absolute inset-0 rounded-full blur-xl ${accent.halo}`} aria-hidden />
+      <div className={`relative w-12 h-12 rounded-full border bg-black/40 flex items-center justify-center ${accent.ring}`}>
+        <Icon className={`w-5 h-5 ${accent.icon}`} strokeWidth={1.5} />
       </div>
     </div>
-  );
+
+    <h3 className="text-[13px] sm:text-sm font-semibold text-white text-center mb-1.5 leading-snug">
+      {title}
+    </h3>
+    <p className="text-zinc-500 text-[11px] leading-snug text-center mb-4 line-clamp-2 min-h-[2.2em]">
+      {description}
+    </p>
+
+    <a
+      href="#contact"
+      className={`mt-auto w-8 h-8 rounded-full border flex items-center justify-center transition-all ${accent.btn}`}
+      aria-label={`Learn more about ${title}`}
+    >
+      <ArrowRight className="w-3.5 h-3.5" />
+    </a>
+  </article>
+);
+
+const formatCategoryLabel = (cat) => {
+  if (!cat) return "";
+  return cat
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
 };
 
-const ProjectCard = ({ title, category, image, description, websiteLink }) => {
-  // Format category for display
-  const formatCategory = (cat) => {
-    if (!cat) return '';
-    return cat
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(' ');
-  };
-
-  const displayCategory = formatCategory(category);
-
-  return (
-    <a
-      href={websiteLink || '#'}
-      target={websiteLink ? "_blank" : undefined}
-      rel={websiteLink ? "noopener noreferrer" : undefined}
-      className="group relative w-full aspect-[4/3] overflow-hidden bg-zinc-900 border border-zinc-800 rounded-2xl cursor-pointer shadow-lg hover:shadow-purple-900/20 transition-all duration-500 block"
-      onMouseEnter={() => document.body.classList.add('hide-scrollbar')}
-      onMouseLeave={() => document.body.classList.remove('hide-scrollbar')}
-    >
-      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-all duration-500 z-10" />
-      <img
-        src={image}
-        alt={title}
-        className="absolute inset-0 w-full h-full object-cover scale-100 group-hover:scale-110 transition-all duration-700 ease-out opacity-90 group-hover:opacity-100"
-      />
-      <div className="absolute inset-0 z-20 p-8 flex flex-col justify-between">
-        <div className="flex justify-between items-start translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-          <span className="text-xs font-mono text-zinc-100 tracking-widest uppercase border border-white/20 px-3 py-1 rounded-full bg-white/10 backdrop-blur">{displayCategory}</span>
-          <ArrowUpRight className="text-white w-6 h-6 opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 transition-all duration-500 delay-100" />
-        </div>
-
-        {/* Description overlay - shows in middle on hover */}
-        <div className="absolute inset-0 flex items-center justify-center z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-          <div className="bg-black/80 backdrop-blur-sm rounded-lg p-6 max-w-md mx-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-            <p className="text-white text-sm leading-relaxed text-center">{description || 'No description available.'}</p>
-          </div>
-        </div>
-
-        <div className="translate-y-8 group-hover:translate-y-0 transition-transform duration-500 delay-75 relative z-20">
-          <h3 className="text-4xl font-light text-white mb-2 tracking-tight">{title}</h3>
-          <div className="h-[1px] w-0 group-hover:w-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-700 delay-200" />
-        </div>
-      </div>
-    </a>
-  );
+const TECH_BY_CATEGORY = {
+  "website development": "React, Node.js, MongoDB, Tailwind CSS",
+  "e-commerce development": "React, Node.js, Stripe, MongoDB",
+  "app development": "React Native, Node.js, Firebase",
+  "game development": "Unity, C#, WebGL",
+  saas: "React, Node.js, AWS, PostgreSQL",
+  "salesforce development": "Apex, Lightning, Salesforce APIs",
+  "cloud based development": "AWS, Docker, Kubernetes",
+  "custom software development": "React, Node.js, Custom APIs",
 };
 
 export default function HomePage() {
-  const [offsetY, setOffsetY] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState('website development');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [portfolios, setPortfolios] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [featuredIndex, setFeaturedIndex] = useState(0);
   const [contact, setContact] = useState({ name: '', company: '', phone: '', email: '', message: '' });
   const [testimonials, setTestimonials] = useState([]);
   const [testimonialIndex, setTestimonialIndex] = useState(0);
-  const ITEMS_PER_PAGE = 4;
   const ourWorkSectionRef = React.useRef(null);
+  const stackRef = React.useRef(null);
+  const [servicesPin, setServicesPin] = useState("relative"); // relative | fixed | absolute
+
+  const carouselRef = React.useRef(null);
   const testimonialsSectionRef = React.useRef(null);
   const testimonialTouchStart = React.useRef({ x: 0 });
   const CAROUSEL_INTERVAL_MS = 5000;
-  const [animations, setAnimations] = useState({
-    web: null,
-    app: null,
-    eccom: null,
-    game: null,
-    saas: null,
-    salesforce: null,
-    cloud: null,
-    custom: null
-  });
   const CONTACT_EMAIL = 'start@gamotech.com';
-
-  const LottieRenderer = ({ animationData }) => {
-    if (!animationData) {
-      return <div className="w-20 h-20 bg-zinc-700 rounded-lg flex items-center justify-center text-zinc-400 text-xs">Loading...</div>;
-    }
-    return <LottieView animationData={animationData} />;
-  };
-
-  // Load animations dynamically
-  useEffect(() => {
-    const loadAnimations = async () => {
-      try {
-        const [
-          webMod,
-          appMod,
-          eccomMod,
-          gamingMod,
-          crmMod,
-          dataSecurityMod,
-          programmingMod,
-          deliverameAppMod
-        ] = await Promise.all([
-          import('../utilities/web.json'),
-          import('../utilities/app.json'),
-          import('../utilities/eccom.json'),
-          import('../utilities/gaming.json'),
-          import('../utilities/crm.json'),
-          import('../utilities/DATA SECURITY.json'),
-          import('../utilities/programming.json'),
-          import('../utilities/deliverame app.json')
-        ]);
-
-        // Extract the actual JSON data - Vite wraps JSON in default
-        const extractData = (module) => {
-          if (!module) return null;
-          if (module.v || module.layers) return module;
-          if (module.default) {
-            if (module.default.v || module.default.layers) return module.default;
-            return module.default;
-          }
-          return module;
-        };
-
-        const loadedAnimations = {
-          web: extractData(webMod) ? JSON.parse(JSON.stringify(extractData(webMod))) : null,
-          app: extractData(appMod) ? JSON.parse(JSON.stringify(extractData(appMod))) : null,
-          eccom: extractData(eccomMod) ? JSON.parse(JSON.stringify(extractData(eccomMod))) : null,
-          game: extractData(gamingMod) ? JSON.parse(JSON.stringify(extractData(gamingMod))) : null,
-          saas: extractData(crmMod) ? JSON.parse(JSON.stringify(extractData(crmMod))) : null,
-          salesforce: extractData(dataSecurityMod) ? JSON.parse(JSON.stringify(extractData(dataSecurityMod))) : null,
-          cloud: extractData(programmingMod) ? JSON.parse(JSON.stringify(extractData(programmingMod))) : null,
-          custom: extractData(deliverameAppMod) ? JSON.parse(JSON.stringify(extractData(deliverameAppMod))) : null
-        };
-
-        setAnimations(loadedAnimations);
-      } catch (error) {
-        console.error('Failed to load Lottie animations:', error);
-      }
-    };
-
-    loadAnimations();
-  }, []);
 
   const handleContactSubmit = (e) => {
     e.preventDefault();
@@ -238,12 +202,6 @@ export default function HomePage() {
     console.log('Contact form submitted:', contact);
     setContact({ name: '', company: '', phone: '', email: '', message: '' });
   };
-
-  useEffect(() => {
-    const handleScroll = () => setOffsetY(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   // Fetch portfolios from API
   useEffect(() => {
@@ -306,7 +264,7 @@ export default function HomePage() {
     const category = (portfolio.category || '').toLowerCase().trim();
     const selected = selectedCategory.toLowerCase().trim();
 
-    console.log('Filtering:', { category, selected, portfolioName: portfolio.name });
+    if (selected === 'all') return true;
 
     // First, try exact match (case-insensitive)
     if (category === selected) {
@@ -331,8 +289,6 @@ export default function HomePage() {
         !normalizedCategory.includes('ecommerce') &&
         !normalizedCategory.includes('e commerce');
     } else if (normalizedSelected.includes('ecommerce') || normalizedSelected.includes('e-commerce') || normalizedSelected.includes('e commerce')) {
-      // Match ecommerce/e-commerce (with or without hyphen, with or without space)
-      // Check both normalized and original category for maximum flexibility
       return normalizedCategory.includes('ecommerce') ||
         normalizedCategory.includes('e commerce') ||
         category.includes('e-commerce') ||
@@ -357,249 +313,595 @@ export default function HomePage() {
     return false;
   });
 
-  console.log('Filtered portfolios:', filteredPortfolios.length, 'for category:', selectedCategory);
-  console.log('All portfolios categories:', portfolios.map(p => ({ name: p.name, category: p.category })));
+  const featuredProject = filteredPortfolios[featuredIndex] || null;
 
-  // Pagination
-  const totalPages = Math.ceil(filteredPortfolios.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedPortfolios = filteredPortfolios.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-
-  // Reset to page 1 when category changes
+  // Reset featured index when category changes
   useEffect(() => {
-    setCurrentPage(1);
+    setFeaturedIndex(0);
   }, [selectedCategory]);
 
-  // Category buttons
+  // Keep featured index in range when list shrinks
+  useEffect(() => {
+    if (filteredPortfolios.length === 0) {
+      setFeaturedIndex(0);
+      return;
+    }
+    if (featuredIndex >= filteredPortfolios.length) {
+      setFeaturedIndex(0);
+    }
+  }, [filteredPortfolios.length, featuredIndex]);
+
+  // Pin Services at top; Our Work layers over it while scrolling through the stack
+  useEffect(() => {
+    let current = "relative";
+    const updatePin = () => {
+      const stack = stackRef.current;
+      if (!stack) return;
+      const rect = stack.getBoundingClientRect();
+      const vh = window.innerHeight;
+      let next = "relative";
+      if (rect.top <= 0 && rect.bottom > vh) next = "fixed";
+      else if (rect.top <= 0) next = "absolute";
+      if (next !== current) {
+        current = next;
+        setServicesPin(next);
+      }
+    };
+    updatePin();
+    window.addEventListener("scroll", updatePin, { passive: true });
+    window.addEventListener("resize", updatePin);
+    return () => {
+      window.removeEventListener("scroll", updatePin);
+      window.removeEventListener("resize", updatePin);
+    };
+  }, []);
+
+  const goToPrevProject = () => {
+    if (filteredPortfolios.length === 0) return;
+    setFeaturedIndex((i) => (i - 1 + filteredPortfolios.length) % filteredPortfolios.length);
+  };
+
+  const goToNextProject = () => {
+    if (filteredPortfolios.length === 0) return;
+    setFeaturedIndex((i) => (i + 1) % filteredPortfolios.length);
+  };
+
+  const scrollCarousel = (dir) => {
+    if (!carouselRef.current) return;
+    carouselRef.current.scrollBy({ left: dir * 280, behavior: 'smooth' });
+  };
+
+  // Category filter buttons (circular icons)
   const categories = [
-    { id: 'website development', label: 'Website Development' },
-    { id: 'e-commerce development', label: 'E-commerce Development' },
-    { id: 'app development', label: 'App Development' },
-    { id: 'game development', label: 'Game Development' },
-    { id: 'saas', label: 'SaaS' },
-    { id: 'salesforce development', label: 'Salesforce Development' },
-    { id: 'cloud based development', label: 'Cloud Based Development' },
-    { id: 'custom software development', label: 'Custom Software Development' }
+    { id: 'all', label: 'All Works', Icon: Globe },
+    { id: 'website development', label: 'Website', Icon: Monitor },
+    { id: 'e-commerce development', label: 'E-commerce', Icon: ShoppingCart },
+    { id: 'app development', label: 'App', Icon: Smartphone },
+    { id: 'saas', label: 'SaaS', Icon: Cloud },
+    { id: 'salesforce development', label: 'Salesforce', Icon: Building2 },
+    { id: 'game development', label: 'Game', Icon: Gamepad2 },
   ];
 
+  const WORK_STATS = [
+    { value: '20+', label: 'Projects Delivered', Icon: Rocket },
+    { value: '15+', label: 'Happy Clients', Icon: Smile },
+    { value: '50K+', label: 'Lines of Code', Icon: Code2 },
+    { value: '100%', label: 'On-Time Delivery', Icon: ShieldCheck },
+  ];
+
+  const DURATION_BY_CATEGORY = {
+    "website development": "3 Months",
+    "e-commerce development": "4 Months",
+    "app development": "4 Months",
+    "game development": "6 Months",
+    saas: "5 Months",
+    "salesforce development": "3 Months",
+    "cloud based development": "4 Months",
+    "custom software development": "5 Months",
+  };
+
   return (
-    <main className="bg-black text-white min-h-screen selection:bg-purple-500 selection:text-white font-outfit overflow-x-hidden">
+    <main className="bg-black text-white min-h-screen selection:bg-purple-500 selection:text-white font-outfit">
 
-      {/* 1. Static Hero - content below scrolls over it */}
-      <section className="fixed top-0 left-0 right-0 h-[90vh] z-0 w-full flex items-center overflow-hidden">
-
-        {/* Background Image - Static */}
-        <div className="absolute inset-0 w-full h-full">
-          <img
-            src={HERO_IMAGE_URL}
-            alt="Corporate Office"
-            className="w-full h-full object-cover"
-          />
-          {/* Dark Overlay for Text Readability */}
-          <div className="absolute inset-0 bg-black/40"></div>
+      {/* 1. Hero — Foundrs structure in React, logo gold theme + dashboard image */}
+      <section
+        className="relative z-[1] text-[#1a1510] flex flex-col items-center overflow-hidden sm:overflow-visible"
+        style={{
+          background: "#ffffff",
+        }}
+      >
+        {/* Drifting / bouncing gold blobs (logo colors) */}
+        <div className="hero-blob-field" aria-hidden>
+          <div className="hero-ring hero-ring-r1" />
+          <div className="hero-ring hero-ring-r2" />
+          <div className="hero-blob hero-blob-b1" />
+          <div className="hero-blob hero-blob-b2" />
+          <div className="hero-blob hero-blob-b3" />
+          <div className="hero-blob hero-blob-b4" />
+          <div className="hero-blob hero-blob-b5" />
+          <div className="hero-dot hero-dot-d1" />
+          <div className="hero-dot hero-dot-d2" />
+          <div className="hero-dot hero-dot-d3" />
         </div>
 
-        {/* Main Content Grid */}
-        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col items-center justify-center h-full">
+        <div className="relative z-[3] w-full flex flex-col items-center px-4 sm:px-6 pt-[4.75rem] sm:pt-28 pb-0">
+          <p className="hero-eyebrow text-[11px] sm:text-[13px] tracking-[0.14em] uppercase font-semibold text-[#5c5346] mb-2 sm:mb-3.5">
+            Gamotech
+          </p>
 
-          {/* Feature Gradient Box - centered horizontally */}
-          <div className="flex justify-center items-center animate-fadeInUp">
-            <div className="w-full max-w-md p-10 md:p-14 rounded-none md:rounded-lg backdrop-blur-md shadow-2xl relative overflow-hidden"
-              style={{
-                background: 'linear-gradient(135deg, rgba(67,35,35,0.7), rgba(182,174,159,0.65), rgba(67,35,35,0.7))'
-              }}
-            >
-              {/* Decorative Line */}
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-400 to-transparent"></div>
+          <h1 className="hero-title text-[clamp(28px,9vw,96px)] font-extrabold tracking-[-0.02em] leading-[0.95] text-center text-[#1a1510]">
+            Your digital
+            <br />
+            <span className="text-[#d4a017]">journey begins</span>
+          </h1>
 
-              <h3 className="text-3xl md:text-4xl font-light mb-6 text-white leading-tight">
-                We combine <br />
-                <span className="font-bold">design, thinking</span> <br />
-                and <span className="font-bold">technical</span>.
-              </h3>
+          <p className="hero-sub mt-2.5 sm:mt-[18px] max-w-[520px] text-center text-[#5c5346] text-[13px] sm:text-base leading-snug sm:leading-relaxed px-1">
+            One partner to design, build, and scale your web, app, and cloud products — from first idea to lasting growth.
+          </p>
 
-              <p className="text-zinc-200 text-lg leading-relaxed font-light">
-                Gamotech is a premier IT solutions provider. We specialize in building high-performance web applications, complex e-commerce platforms, and digital experiences that drive growth.
-              </p>
+          <p
+            className="hidden sm:block mt-5 sm:mt-6 z-[3] text-[#5c5346] text-[13px]"
+            style={{ opacity: 0, animation: "hero-rise 0.8s ease forwards 1.1s" }}
+          >
+            Built for brands that want to scale.
+          </p>
+
+          {/* Laptop mockup — smaller on phone, full image, flush to black section */}
+          <div className="hero-mockup-wrap mt-4 sm:mt-10 mb-0 w-[78%] max-w-[300px] sm:w-full sm:max-w-[680px] md:max-w-[740px] relative z-20">
+            <div className="overflow-hidden w-full mx-auto drop-shadow-[0_18px_36px_rgba(26,21,16,0.28)]">
+              <img
+                src={heroDashboard}
+                alt="Gamotech Solutions dashboard"
+                className="block w-full h-auto"
+              />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Spacer so content starts below hero; scrolling content has higher z so it slides over hero */}
-      <div className="relative z-10 h-[90vh] shrink-0" aria-hidden="true" />
-      {/* 2. Services We Provide */}
-      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 bg-black relative z-10 overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-8 sm:mb-12 md:mb-16 text-center tracking-tight">
-            Services We Provide
-          </h2>
-          {/* Row 1: Original 4 cards */}
-          <div className="flex flex-wrap sm:flex-nowrap justify-center items-center gap-4 sm:gap-6 lg:gap-8 overflow-x-auto overflow-y-hidden pb-4 sm:pb-0 px-2">
-            <ServiceFlipCard
-              title="Web Development"
-              icon={<LottieRenderer animationData={animations.web} />}
-              description={`Building scalable web applications\nusing modern frameworks and technologies.\nWe create responsive and interactive websites\nthat provide exceptional user experiences.\nOur solutions are optimized for performance.`}
-            />
-            <ServiceFlipCard
-              title="App Development"
-              icon={<LottieRenderer animationData={animations.app} />}
-              description={`Native and cross-platform mobile apps\nthat engage users and grow your business.\nWe develop iOS and Android applications\nwith seamless user interfaces.\nOur apps are designed for scalability.`}
-            />
-            <ServiceFlipCard
-              title="E-commerce Development"
-              icon={<LottieRenderer animationData={animations.eccom} />}
-              description={`Full-featured online stores with\npayment integration and seamless shopping.\nWe build secure e-commerce platforms\nthat drive sales and customer satisfaction.\nComplete solutions for your business needs.`}
-            />
-            <ServiceFlipCard
-              title="Game Development"
-              icon={<LottieRenderer animationData={animations.game} />}
-              description={`Engaging games for web, mobile, and desktop.\nWe build 2D and 3D games with modern engines\nand frameworks. From concept to launch,\nwe deliver immersive experiences for players.`}
-            />
-          </div>
-          {/* Row 2: 4 new service cards */}
-          <div className="flex flex-wrap sm:flex-nowrap justify-center items-center gap-4 sm:gap-6 lg:gap-8 overflow-x-auto overflow-y-hidden pt-8 sm:pt-10 lg:pt-12 pb-4 sm:pb-0 px-2">
-            <ServiceFlipCard
-              title="SaaS"
-              icon={<LottieRenderer animationData={animations.saas} />}
-              description={`Software as a Service solutions built for scale.\nWe design and develop cloud-hosted applications\nwith subscription models, multi-tenancy,\nand seamless updates for your users.`}
-            />
-            <ServiceFlipCard
-              title="Salesforce Development"
-              icon={<LottieRenderer animationData={animations.salesforce} />}
-              description={`Custom Salesforce solutions and integrations.\nWe extend and automate your CRM with Apex,\nLightning components, and connected apps\nto maximize your Salesforce investment.`}
-            />
-            <ServiceFlipCard
-              title="Cloud Based Development"
-              icon={<LottieRenderer animationData={animations.cloud} />}
-              description={`Cloud-native applications on AWS, Azure, or GCP.\nWe build scalable, secure systems with\ncontainers, serverless, and managed services\nfor reliability and cost efficiency.`}
-            />
-            <ServiceFlipCard
-              title="Custom Software Development"
-              icon={<LottieRenderer animationData={animations.custom} />}
-              description={`Tailored software for your unique workflows.\nFrom internal tools to client-facing platforms,\nwe deliver custom applications that fit\nyour business requirements exactly.`}
-            />
-          </div>
+      {/* Services pins; Our Work layers over it on scroll */}
+      <div ref={stackRef} className="relative">
+        {/* Spacer: scroll room while services is fixed */}
+        <div className="h-screen w-full" aria-hidden />
+        <section
+          id="services"
+          className={`w-full h-screen pt-14 sm:pt-16 md:pt-20 pb-10 sm:pb-14 md:pb-16 px-4 sm:px-6 bg-black flex flex-col justify-start overflow-hidden z-10 ${
+            servicesPin === "fixed"
+              ? "fixed top-0 left-0 right-0"
+              : servicesPin === "absolute"
+                ? "absolute inset-x-0 bottom-0"
+                : "absolute inset-x-0 top-0"
+          }`}
+        >
+        {/* Soft purple weave + spark dots */}
+        <div className="pointer-events-none absolute inset-0 opacity-45" aria-hidden>
+          <svg className="absolute top-8 right-0 w-[70%] h-[45%]" viewBox="0 0 800 400" fill="none">
+            <path d="M50 80C150 20 250 140 350 90C450 40 550 150 700 80" stroke="#a855f7" strokeWidth="1.2" opacity="0.55" />
+            <path d="M30 160C140 100 260 200 380 140C500 80 620 210 780 130" stroke="#c084fc" strokeWidth="1" opacity="0.35" />
+            <path d="M80 240C180 180 300 280 420 220C540 160 660 290 790 210" stroke="#8b5cf6" strokeWidth="1" opacity="0.3" />
+            <circle cx="180" cy="70" r="2" fill="#e9d5ff" opacity="0.7" />
+            <circle cx="420" cy="50" r="1.5" fill="#f0abfc" opacity="0.6" />
+            <circle cx="620" cy="110" r="2" fill="#c084fc" opacity="0.65" />
+          </svg>
+          <svg className="absolute bottom-16 left-0 w-[55%] h-[35%]" viewBox="0 0 700 300" fill="none">
+            <path d="M20 100C120 40 220 160 340 100C460 40 560 170 680 90" stroke="#d8b4fe" strokeWidth="1" opacity="0.28" />
+            <circle cx="90" cy="140" r="1.5" fill="#e9d5ff" opacity="0.5" />
+            <circle cx="300" cy="80" r="2" fill="#a855f7" opacity="0.55" />
+          </svg>
         </div>
-      </section>
+        <div className="pointer-events-none absolute top-24 left-1/2 -translate-x-1/2 w-80 h-80 bg-purple-600/10 blur-[110px] rounded-full" aria-hidden />
 
-      {/* 3. Featured Projects (Our Work) */}
-      <section ref={ourWorkSectionRef} className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 bg-zinc-950 relative z-10">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 sm:mb-12 border-b border-zinc-800 pb-6 sm:pb-10">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tighter mb-4 md:mb-0">
-              Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">Works</span>
+        <div className="max-w-6xl mx-auto relative w-full">
+          {/* Header */}
+          <div className="text-center mb-8 sm:mb-10">
+            <p className="text-[11px] sm:text-xs tracking-[0.28em] uppercase text-purple-400 font-medium mb-2.5">
+              What We Do
+            </p>
+            <h2 className="text-3xl sm:text-4xl md:text-[2.75rem] font-bold tracking-tight mb-3">
+              <span className="text-white">Services </span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-fuchsia-400 to-orange-400">
+                We Provide
+              </span>
             </h2>
-            <p className="text-zinc-400 max-w-md text-left md:text-right mt-4 md:mt-0 text-base sm:text-lg md:text-xl font-light">
-              A showcase of our recent partnerships and successful deliveries.
+            <p className="text-zinc-400 text-sm max-w-lg mx-auto">
+              End-to-end digital solutions for startups and enterprises.
             </p>
           </div>
 
-          {/* Toggle Buttons */}
-          <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mb-8 sm:mb-12">
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-all duration-300 ${selectedCategory === cat.id
-                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
-                    : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white'
-                  }`}
-              >
-                {cat.label}
-              </button>
-            ))}
+          {/* Compact 2x4 grid */}
+          <div className="max-w-5xl mx-auto">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              {SERVICES.map((service) => (
+                <ServiceCard key={service.title} {...service} />
+              ))}
+            </div>
           </div>
 
+          {/* Slim CTA bar */}
+          <div className="mt-8 sm:mt-10 max-w-5xl mx-auto rounded-xl border border-white/5 bg-white/[0.03] backdrop-blur-md px-4 sm:px-6 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="flex items-center gap-3 text-center sm:text-left">
+              <span className="hidden sm:flex w-9 h-9 rounded-full border border-purple-500/40 bg-purple-500/10 items-center justify-center shrink-0">
+                <Rocket className="w-4 h-4 text-purple-300" />
+              </span>
+              <p className="text-zinc-300 text-xs sm:text-sm">
+                Have a project in mind? Let&apos;s build something amazing together.
+              </p>
+            </div>
+            <a
+              href="#contact"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-purple-300 hover:text-purple-200 transition-colors shrink-0"
+            >
+              Get In Touch
+              <ArrowRight className="w-3.5 h-3.5" />
+            </a>
+          </div>
+        </div>
+        </section>
 
+      {/* 3. Our Work — exact gold / charcoal / off-white reference layout */}
+      <section
+        id="our-work"
+        ref={ourWorkSectionRef}
+        className="relative z-20 pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 text-[#111] overflow-hidden shadow-[0_-40px_80px_rgba(0,0,0,0.35)] rounded-t-[28px] sm:rounded-t-[40px]"
+        style={{ background: "#f7f7f5" }}
+      >
+        {/* Faint gold wavy lines + dots (watermark) */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+          <svg className="absolute -top-6 right-0 w-[65%] h-[50%] opacity-[0.22]" viewBox="0 0 800 500" fill="none">
+            <path d="M50 80C120 40 200 120 280 90C360 60 420 140 500 110C580 80 650 160 740 100" stroke="#FFB400" strokeWidth="1.2" />
+            <path d="M30 160C110 120 190 200 270 170C350 140 430 220 510 180C590 140 670 230 780 170" stroke="#FFB400" strokeWidth="1" />
+            <path d="M80 240C150 200 230 280 320 250C410 220 480 300 570 260C660 220 720 310 790 250" stroke="#EAB308" strokeWidth="1" />
+          </svg>
+          <svg className="absolute bottom-8 left-0 w-[50%] h-[35%] opacity-[0.18] rotate-180" viewBox="0 0 800 400" fill="none">
+            <path d="M50 80C120 40 200 120 280 90C360 60 420 140 500 110C580 80 650 160 740 100" stroke="#FFB400" strokeWidth="1" />
+            <path d="M30 160C110 120 190 200 270 170C350 140 430 220 510 180C590 140 670 230 780 170" stroke="#EAB308" strokeWidth="1" />
+          </svg>
+          <div
+            className="absolute bottom-10 right-8 w-48 h-32 opacity-[0.2]"
+            style={{
+              backgroundImage: "radial-gradient(circle, #FFB400 1px, transparent 1px)",
+              backgroundSize: "14px 14px",
+            }}
+          />
+        </div>
 
-          {/* Portfolio Grid */}
+        <div className="max-w-7xl mx-auto relative">
+          {/* Header — title + filters on one line */}
+          <div className="mb-6 sm:mb-8">
+            <p className="text-[11px] sm:text-xs tracking-[0.3em] uppercase font-semibold text-[#FFB400] mb-2">
+              Portfolio
+            </p>
+            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5 lg:gap-8">
+              <div className="min-w-0 shrink-0">
+                <h2 className="text-3xl sm:text-4xl md:text-[3.25rem] font-bold tracking-tight uppercase leading-none mb-2 sm:mb-3">
+                  <span className="text-[#111]">Our </span>
+                  <span className="text-[#FFB400]">Work</span>
+                </h2>
+                <p className="text-zinc-500 text-sm sm:text-[15px] max-w-md leading-relaxed lg:max-w-sm">
+                  Explore our latest builds — websites, apps, and platforms crafted for growth.
+                </p>
+              </div>
+
+              <div className="flex flex-nowrap justify-start lg:justify-end gap-2.5 sm:gap-3.5 overflow-x-auto pb-1 scrollbar-none" style={{ scrollbarWidth: "none" }}>
+                {categories.map(({ id, label, Icon }) => {
+                  const isActive = selectedCategory === id;
+                  return (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => setSelectedCategory(id)}
+                      className="flex flex-col items-center gap-1.5 group min-w-[3.75rem] sm:min-w-[4.25rem] shrink-0"
+                    >
+                      <span
+                        className={`w-11 h-11 sm:w-[3.4rem] sm:h-[3.4rem] rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                          isActive
+                            ? "bg-[#111] border-[#FFB400] text-white shadow-[0_8px_20px_rgba(0,0,0,0.18)]"
+                            : "bg-white border-zinc-300 text-zinc-400 hover:border-[#FFB400] hover:text-[#111]"
+                        }`}
+                      >
+                        <Icon className="w-[18px] h-[18px]" strokeWidth={1.75} />
+                      </span>
+                      <span
+                        className={`text-[10px] sm:text-[11px] font-medium whitespace-nowrap pb-1 border-b-2 transition-colors ${
+                          isActive
+                            ? "text-[#111] border-[#FFB400]"
+                            : "text-zinc-500 border-transparent group-hover:text-zinc-700"
+                        }`}
+                      >
+                        {label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Featured project */}
           {loading ? (
             <div className="text-center py-20">
-              <p className="text-zinc-400 text-lg">Loading portfolios...</p>
+              <p className="text-zinc-500 text-lg">Loading portfolios...</p>
             </div>
           ) : portfolios.length === 0 ? (
             <div className="text-center py-20">
-              <p className="text-zinc-400 text-xl">No portfolios found. Please check if the backend server is running.</p>
+              <p className="text-zinc-500 text-xl">No portfolios found. Please check if the backend server is running.</p>
             </div>
           ) : filteredPortfolios.length === 0 ? (
             <div className="text-center py-20">
-              <p className="text-zinc-400 text-xl">
-                {['game development', 'saas', 'salesforce development', 'cloud based development', 'custom software development'].includes(selectedCategory)
-                  ? 'Future projects incoming'
-                  : `No ${selectedCategory} projects available yet.`}
-              </p>
-              <p className="text-zinc-500 text-sm mt-2">
-                Available categories: {[...new Set(portfolios.map(p => p.category))].join(', ')}
-              </p>
+              <p className="text-zinc-500 text-xl">No projects in this category yet.</p>
             </div>
-          ) : (
+          ) : featuredProject ? (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 overflow-visible pb-16 sm:pb-24 md:pb-32">
-                {paginatedPortfolios.map((portfolio, index) => (
+              <div className="relative">
+                {filteredPortfolios.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={goToPrevProject}
+                      className="hidden lg:flex absolute -left-4 xl:-left-5 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full border border-white/15 bg-[#1a1a1a]/95 text-white items-center justify-center hover:border-[#FFB400] hover:text-[#FFB400] transition-all shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
+                      aria-label="Previous project"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={goToNextProject}
+                      className="hidden lg:flex absolute -right-4 xl:-right-5 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full border border-white/15 bg-[#1a1a1a]/95 text-white items-center justify-center hover:border-[#FFB400] hover:text-[#FFB400] transition-all shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
+                      aria-label="Next project"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </>
+                )}
+
+                {/* Dark featured card with gradient + glow */}
+                <div
+                  className="relative rounded-[28px] sm:rounded-[32px] overflow-hidden text-white shadow-[0_30px_70px_-24px_rgba(0,0,0,0.55)]"
+                  style={{
+                    background:
+                      "radial-gradient(ellipse 80% 70% at 25% 40%, #2a2a2a 0%, #161616 45%, #0c0c0c 100%)",
+                  }}
+                >
+                  {/* Soft gold glow behind mockups */}
                   <div
-                    key={portfolio._id || index}
-                    className={`${index % 2 === 1 ? 'md:translate-y-24' : ''}`}
-                  >
-                    <ProjectCard
-                      title={portfolio.name || 'Untitled'}
-                      category={portfolio.category || ''}
-                      image={portfolio.image || ''}
-                      description={portfolio.description || ''}
-                      websiteLink={portfolio.websiteLink || ''}
-                    />
+                    className="pointer-events-none absolute left-[8%] top-[20%] w-[42%] h-[55%] rounded-full blur-[80px] opacity-30"
+                    style={{ background: "radial-gradient(circle, #FFB400 0%, transparent 70%)" }}
+                    aria-hidden
+                  />
+                  {/* Subtle mesh */}
+                  <div
+                    className="pointer-events-none absolute inset-0 opacity-[0.07]"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(rgba(255,255,255,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.35) 1px, transparent 1px)",
+                      backgroundSize: "28px 28px",
+                    }}
+                    aria-hidden
+                  />
+
+                  <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 p-6 sm:p-8 lg:p-10 items-center">
+                    {/* Device mockups */}
+                    <div className="relative">
+                      <span className="absolute -top-1 left-0 z-20 inline-flex items-center gap-1.5 text-[10px] tracking-[0.14em] uppercase font-bold text-[#111] bg-[#FFB400] px-3 py-1.5 rounded-full shadow-[0_6px_16px_rgba(255,180,0,0.35)]">
+                        <Star className="w-3 h-3 fill-current" />
+                        Featured Project
+                      </span>
+
+                      <div className="relative mt-8 flex items-end justify-center min-h-[260px] sm:min-h-[320px]">
+                        <div className="relative w-[88%] sm:w-[85%] z-10 drop-shadow-[0_20px_40px_rgba(0,0,0,0.55)]">
+                          <div className="rounded-t-xl border border-zinc-500/70 bg-[#1c1c1c] p-1.5 sm:p-2">
+                            <div className="rounded-lg overflow-hidden aspect-[16/10] bg-zinc-950">
+                              <img
+                                src={featuredProject.image}
+                                alt={featuredProject.name || "Featured project"}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          </div>
+                          <div className="h-2 sm:h-2.5 bg-gradient-to-b from-zinc-600 to-zinc-800 rounded-b-md mx-auto w-[102%]" />
+                          <div className="h-1.5 bg-zinc-800 rounded-b-xl mx-auto w-[60%] opacity-90" />
+                        </div>
+
+                        <div className="absolute right-0 sm:right-2 bottom-2 z-20 w-[28%] sm:w-[26%] max-w-[120px] drop-shadow-[0_16px_28px_rgba(0,0,0,0.55)]">
+                          <div className="rounded-[1.15rem] border-[3px] border-zinc-400/80 bg-zinc-950 p-1">
+                            <div className="mx-auto mb-1 h-1 w-8 rounded-full bg-zinc-600" />
+                            <div className="rounded-[0.7rem] overflow-hidden aspect-[9/16] bg-zinc-900">
+                              <img
+                                src={featuredProject.image}
+                                alt=""
+                                className="w-full h-full object-cover object-left"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Project details — yellow outlined square icons */}
+                    <div>
+                      <span className="inline-block text-[10px] tracking-[0.18em] uppercase font-bold text-[#FFB400] border border-[#FFB400] px-3.5 py-1.5 rounded-full mb-4">
+                        {formatCategoryLabel(featuredProject.category)}
+                      </span>
+                      <h3 className="text-3xl sm:text-4xl lg:text-[2.65rem] font-bold text-white mb-3.5 tracking-tight leading-[1.1]">
+                        {featuredProject.name || "Untitled"}
+                      </h3>
+                      <p className="text-zinc-400 text-sm sm:text-[15px] leading-relaxed mb-6 max-w-md">
+                        {featuredProject.description ||
+                          "A high-performance digital experience crafted to scale with your business and deliver measurable results."}
+                      </p>
+
+                      <div className="space-y-4 mb-7">
+                        <div className="flex items-start gap-3.5">
+                          <span className="w-10 h-10 rounded-lg border border-[#FFB400] bg-[#FFB400]/10 flex items-center justify-center shrink-0">
+                            <Code2 className="w-[18px] h-[18px] text-[#FFB400]" strokeWidth={1.75} />
+                          </span>
+                          <div className="min-w-0 pt-0.5">
+                            <p className="text-[11px] uppercase tracking-[0.14em] font-bold text-[#FFB400] mb-0.5">
+                              Tech Stack
+                            </p>
+                            <p className="text-white text-sm sm:text-[15px] leading-snug">
+                              {TECH_BY_CATEGORY[featuredProject.category] || "Modern web stack"}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3.5">
+                          <span className="w-10 h-10 rounded-lg border border-[#FFB400] bg-[#FFB400]/10 flex items-center justify-center shrink-0">
+                            <Briefcase className="w-[18px] h-[18px] text-[#FFB400]" strokeWidth={1.75} />
+                          </span>
+                          <div className="min-w-0 pt-0.5">
+                            <p className="text-[11px] uppercase tracking-[0.14em] font-bold text-[#FFB400] mb-0.5">
+                              Category
+                            </p>
+                            <p className="text-white text-sm sm:text-[15px] leading-snug">
+                              {featuredProject.webType || formatCategoryLabel(featuredProject.category)}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3.5">
+                          <span className="w-10 h-10 rounded-lg border border-[#FFB400] bg-[#FFB400]/10 flex items-center justify-center shrink-0">
+                            <Clock className="w-[18px] h-[18px] text-[#FFB400]" strokeWidth={1.75} />
+                          </span>
+                          <div className="min-w-0 pt-0.5">
+                            <p className="text-[11px] uppercase tracking-[0.14em] font-bold text-[#FFB400] mb-0.5">
+                              Duration
+                            </p>
+                            <p className="text-white text-sm sm:text-[15px] leading-snug">
+                              {DURATION_BY_CATEGORY[featuredProject.category] || "3 Months"}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3.5">
+                          <span className="w-10 h-10 rounded-lg border border-[#FFB400] bg-[#FFB400]/10 flex items-center justify-center shrink-0">
+                            <Link2 className="w-[18px] h-[18px] text-[#FFB400]" strokeWidth={1.75} />
+                          </span>
+                          <div className="min-w-0 pt-0.5">
+                            <p className="text-[11px] uppercase tracking-[0.14em] font-bold text-[#FFB400] mb-0.5">
+                              Live Preview
+                            </p>
+                            {featuredProject.websiteLink ? (
+                              <a
+                                href={featuredProject.websiteLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-white hover:text-[#FFB400] text-sm sm:text-[15px] inline-flex items-center gap-1.5 transition-colors leading-snug"
+                              >
+                                {featuredProject.websiteLink.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+                                <ExternalLink className="w-3.5 h-3.5 text-[#FFB400]" />
+                              </a>
+                            ) : (
+                              <p className="text-zinc-500 text-sm sm:text-[15px]">Coming soon</p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap gap-3">
+                        {featuredProject.websiteLink ? (
+                          <a
+                            href={featuredProject.websiteLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-[#111] bg-[#FFB400] hover:bg-[#ffc107] transition-all shadow-[0_8px_24px_rgba(255,180,0,0.35)]"
+                          >
+                            View Live Project
+                            <ExternalLink className="w-4 h-4" />
+                          </a>
+                        ) : null}
+                        <a
+                          href={featuredProject.websiteLink || "#"}
+                          target={featuredProject.websiteLink ? "_blank" : undefined}
+                          rel={featuredProject.websiteLink ? "noopener noreferrer" : undefined}
+                          className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-white bg-transparent border border-white/60 hover:border-[#FFB400] hover:text-[#FFB400] transition-all"
+                        >
+                          <FileText className="w-4 h-4" />
+                          View Case Study
+                        </a>
+                      </div>
+                    </div>
                   </div>
-                ))}
+
+                  {/* Pagination at bottom of card */}
+                  <div className="relative flex flex-col items-center gap-2 pb-5 sm:pb-6 -mt-2">
+                    <div className="w-20 h-[3px] rounded-full bg-[#FFB400]" />
+                    <p className="text-[11px] sm:text-xs text-zinc-400 tracking-[0.28em] font-medium">
+                      {String(featuredIndex + 1).padStart(2, "0")} / {String(filteredPortfolios.length).padStart(2, "0")}
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              {/* Pagination */}
-              <div className="flex justify-center items-center gap-4 mt-16 pt-10 border-t border-zinc-800">
+              {/* Thumbnail carousel */}
+              <div className="mt-6 sm:mt-7 relative px-9 sm:px-11">
                 <button
                   type="button"
-                  onClick={() => {
-                    if (currentPage === 1) {
-                      // If on first page, scroll to top of portfolio section
-                      ourWorkSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    } else {
-                      // Go to previous page and scroll to portfolio section
-                      setCurrentPage((p) => Math.max(1, p - 1));
-                      setTimeout(() => {
-                        ourWorkSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                      }, 100);
-                    }
-                  }}
-                  className="flex items-center justify-center w-11 h-11 rounded-lg bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700 hover:text-white transition-all"
-                  aria-label="Previous page"
+                  onClick={() => scrollCarousel(-1)}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-[#2a2a2a] text-white hover:bg-[#FFB400] hover:text-[#111] shadow-md flex items-center justify-center transition-colors"
+                  aria-label="Scroll projects left"
                 >
-                  <ChevronLeft className="w-6 h-6" />
+                  <ChevronLeft className="w-4 h-4" />
                 </button>
-                <span className="min-w-[3rem] text-center text-lg font-semibold text-white">
-                  {currentPage} / {totalPages}
-                </span>
                 <button
                   type="button"
-                  onClick={() => {
-                    if (currentPage === totalPages) {
-                      // If on last page, scroll to testimonials section
-                      testimonialsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    } else {
-                      // Go to next page and scroll to portfolio section
-                      setCurrentPage((p) => Math.min(totalPages, p + 1));
-                      setTimeout(() => {
-                        ourWorkSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                      }, 100);
-                    }
-                  }}
-                  className="flex items-center justify-center w-11 h-11 rounded-lg bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700 hover:text-white transition-all"
-                  aria-label="Next page"
+                  onClick={() => scrollCarousel(1)}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-[#2a2a2a] text-white hover:bg-[#FFB400] hover:text-[#111] shadow-md flex items-center justify-center transition-colors"
+                  aria-label="Scroll projects right"
                 >
-                  <ChevronRight className="w-6 h-6" />
+                  <ChevronRight className="w-4 h-4" />
                 </button>
+                <div
+                  ref={carouselRef}
+                  className="flex gap-3 sm:gap-4 overflow-x-auto py-2 scroll-smooth"
+                  style={{ scrollbarWidth: "none" }}
+                >
+                  {filteredPortfolios.map((project, index) => {
+                    const isActive = index === featuredIndex;
+                    return (
+                      <button
+                        key={project._id || index}
+                        type="button"
+                        onClick={() => setFeaturedIndex(index)}
+                        className={`group flex-shrink-0 w-40 sm:w-48 text-left rounded-2xl overflow-hidden border-[3px] transition-all duration-300 ${
+                          isActive
+                            ? "border-[#FFB400] shadow-[0_0_18px_rgba(255,180,0,0.35)]"
+                            : "border-transparent opacity-85 hover:opacity-100"
+                        }`}
+                      >
+                        <div className="relative aspect-[5/3] bg-zinc-200 rounded-[13px] overflow-hidden">
+                          <img
+                            src={project.image}
+                            alt={project.name || `Project ${index + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+                          <p className="absolute bottom-2 left-2 right-2 text-xs sm:text-sm font-semibold text-white truncate">
+                            {project.name || "Untitled"}
+                          </p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </>
-          )}
+          ) : null}
+
+          {/* Stats bar — solid gold circles, black icons */}
+          <div className="mt-6 sm:mt-8 rounded-[22px] sm:rounded-[28px] bg-white shadow-[0_16px_50px_-18px_rgba(0,0,0,0.18)] px-5 sm:px-8 py-5 sm:py-6 grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+            {WORK_STATS.map(({ value, label, Icon }) => (
+              <div key={label} className="flex items-center gap-3 sm:gap-4">
+                <span className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#FFB400] flex items-center justify-center text-[#111] shrink-0 shadow-[0_6px_16px_rgba(255,180,0,0.35)]">
+                  <Icon className="w-5 h-5" strokeWidth={2} />
+                </span>
+                <div>
+                  <p className="text-xl sm:text-2xl font-bold text-[#111] leading-none">{value}</p>
+                  <p className="text-xs sm:text-sm text-zinc-500 mt-1">{label}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
+      </div>
 
       {/* Client Testimonials - responsive: 1 card carousel < lg, 2 cards md-lg, 3 cards lg+ */}
       <section className="pt-4 sm:pt-6 md:pt-8 pb-12 sm:pb-16 md:pb-20 lg:pb-24 xl:pb-32 px-4 sm:px-6 bg-black relative z-10 overflow-visible">
@@ -786,7 +1088,7 @@ export default function HomePage() {
       </section>
 
       {/* 4. Contact section - two columns: heading + handshake | form */}
-      <section className="py-12 sm:py-16 md:py-20 lg:py-28 bg-[#f5f0ea] relative z-10">
+      <section id="contact" className="py-12 sm:py-16 md:py-20 lg:py-28 bg-[#f5f0ea] relative z-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-start">
             {/* Left: heading, email, handshake image */}
